@@ -1,0 +1,319 @@
+body{
+    width: 1200px;
+    height: 800px;
+}
+
+.frame{
+    width: 1200px;
+    height: 800px;
+    background-color: rgb(213, 233, 214);
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+header{
+    width: 100%;
+    height:59px;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 5px solid green;
+    border-bottom: 3px solid green;
+    font-family: 'Montserrat', sans-serif
+}
+
+.logo_and_name{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.site_name{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+    font-weight: 650;
+    color: green;
+    text-decoration: none;
+}
+
+.search {
+    position: relative;
+    width: 300px;
+  }
+  
+input {
+    width: 100%;
+    border: 2px solid darkgreen;
+    border-radius: 8px;
+    background-color: white;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.dropdown{
+  position : relative;
+  display : inline-block;
+}
+
+.dropdown_button{
+  border : 1px solid darkgreen;
+  border-radius : 4px;
+  background-color: white;
+  font-weight: 500;
+  color : darkgreen;
+  padding : 2px;
+  width:115px;
+  height:30px;
+  text-align: left;
+  cursor : pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size : 16px;
+  color: darkgreen;
+}
+
+.dropdown_button:hover {
+    background-color: green;
+    color: white;
+}
+
+.dropdown-content{
+  display : none;
+  position : absolute;
+  z-index : 1;
+  font-weight: 500;
+  background-color: lightgray;
+  border-radius: 10px;
+  min-width : 115px;
+}
+
+.dropdown-content a{
+  display : block;
+  text-decoration : none;
+  color : black;
+  font-size: 14px;
+  padding : 12px 20px;
+}
+
+.dropdown-content a:hover{
+  background-color : rgb(160, 214, 162);
+  border-radius: 10px;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.login_and_cart{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right:20px;
+}
+
+.login_button{
+    border-style: none;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size : 16px;
+    color: darkgreen;
+    width: 150px;
+    cursor : pointer;
+    font-weight: 500;
+}
+
+.cart_button{
+    border-style: none;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    cursor : pointer;
+}
+
+.itemcount{
+    position:absolute;
+    margin-top: 10px;
+    margin-left: 5px;
+    border-radius: 5px;
+    width:18px;
+    height:15px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: white;
+    font-size: 14px;
+}
+
+
+
+
+.middle{
+    height:685px;
+    display: flex;
+    flex-direction: column; 
+}
+
+.sidebar{
+    height:30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.category_list{
+    text-align: center;
+    border: 2px solid green;
+    border-bottom: 3px solid green;
+    margin: 0px;
+    padding:5px;
+    width: 150px;
+    font-size:15px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color:black;
+    background-color: lightgreen;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.category_list:hover{
+    background-color: green;
+    color:white;
+}
+
+#fiction{
+    background-color: green;
+    color:white;
+}
+
+
+.books{
+    height:645px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.book_box{
+    margin-top:10px;
+    background-color: rgb(189, 154, 109);
+    width: 170px;
+    height: 300px;
+    border: 2px solid green;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    margin-left:20px;
+    margin-right:20px;
+}
+
+.book_titles{
+    font-size: 15px;
+    width: 140px;
+    height: 40px;
+    margin:2px;
+    text-align: center;
+}
+
+.readnow{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.read_now_button{
+    position: absolute;
+    border: 1px solid black;
+    border-radius: 5px;
+    height:17px;
+    background-color:orange;
+    color:black;
+    font-size: 11px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight:600;
+}
+
+.authors{
+    font-size: 14px;
+    margin:1px;
+    font-weight: 500;
+}
+
+.prices{
+    font-size: 14px;
+    margin:1px;
+    font-weight:600;
+}
+
+.add_to_cart_button{
+    margin-bottom: 2px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color:darkgreen;
+    color:white;
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+
+
+footer{
+    width: 100%;
+    height:40px;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 3px solid green;
+    border-bottom: 5px solid green;
+}
+
+.logo_and_services{
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.links{
+    font-size:16px;
+    margin:5px;
+    font-family: 'Montserrat', sans-serif;
+    color:black;
+    text-decoration: none;
+}
+
+.copyright{
+    font-size:12px;
+    font-family: 'Montserrat', sans-serif;
+    color:black;
+}
+
+.sns{
+    display: flex;
+    flex-direction: row;
+}
+
+.icons{
+    margin:5px;
+}
