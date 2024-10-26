@@ -22,8 +22,8 @@ header{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-top: 5px solid green;
-    border-bottom: 3px solid green;
+    border-top: 5px solid rgba(134,31,65,255);
+    border-bottom: 3px solid rgba(134,31,65,255);
     font-family: 'Montserrat', sans-serif
 }
 
@@ -32,13 +32,19 @@ header{
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    gap: 1rem;
+}
+
+a img {
+    width: 55px;
+    height: 100%;
 }
 
 .site_name{
     font-family: 'Montserrat', sans-serif;
     font-size: 30px;
     font-weight: 650;
-    color: green;
+    color: rgba(134,31,65,255);
     text-decoration: none;
 }
 
@@ -49,7 +55,7 @@ header{
   
 input {
     width: 100%;
-    border: 2px solid darkgreen;
+    border: 2px solid rgba(134,31,65,255);
     border-radius: 8px;
     background-color: white;
     padding: 10px 12px;
@@ -62,23 +68,22 @@ input {
 }
 
 .dropdown_button{
-  border : 1px solid darkgreen;
+  border : 1px solid rgba(134,31,65,255);
   border-radius : 4px;
   background-color: white;
   font-weight: 500;
-  color : darkgreen;
+  color : rgba(134,31,65,255);
   padding : 2px;
-  width:115px;
   height:30px;
   text-align: left;
   cursor : pointer;
   font-family: 'Montserrat', sans-serif;
   font-size : 16px;
-  color: darkgreen;
+  color: rgba(134,31,65,255);
 }
 
 .dropdown_button:hover {
-    background-color: green;
+    background-color: rgba(134,31,65,255);
     color: white;
 }
 
@@ -101,7 +106,7 @@ input {
 }
 
 .dropdown-content a:hover{
-  background-color : rgb(160, 214, 162);
+  background-color : rgba(134,31,65,255);
   border-radius: 10px;
 }
 
@@ -110,24 +115,28 @@ input {
 }
 
 .login_and_cart{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
     align-items: center;
     margin-right:20px;
+}
+
+button.researchOpportunities {
+    border-style: none;
+    background-color: white;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size : 16px;
+    color: rgba(134,31,65,255);
+    width: 150px;
+    cursor : pointer;
+    font-weight: 500;
 }
 
 .login_button{
     border-style: none;
     background-color: white;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
     font-family: 'Montserrat', sans-serif;
     font-size : 16px;
-    color: darkgreen;
-    width: 150px;
+    color: rgba(134,31,65,255);
     cursor : pointer;
     font-weight: 500;
 }
