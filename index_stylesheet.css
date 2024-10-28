@@ -328,18 +328,3 @@ footer{
     color:black;
     text-decoration: none;
 }
-
-.copyright{
-    font-size:12px;
-    font-family: 'Montserrat', sans-serif;
-    color:black;
-}
-
-.sns{
-    display: flex;
-    flex-direction: row;
-}
-
-.icons{
-    margin:5px;
-}
