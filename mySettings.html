@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="My Settings - VT Research Opportunities Website">
+        <title>My Settings</title>
+        <link
+            href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="settings_stylesheet.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="frame">
+            <header class="header">
+                <div class="logo_and_name">
+                    <a href="researchIndex.html">
+                        <img src="images/vtlogo.png" alt="Virginia Tech Logo" />
+                    </a>                   
+                    <a class="site_name" href="researchIndex.html">Virginia Tech</a>
+                </div>
+                <nav class="nav_links">
+                    <a href="researchOpportunities.html">Research Opportunities</a>
+                    <a href="goodbooks_category.html">My Applications</a>
+                    <a href="goodbooks_category.html">My Resumes</a>
+                    <a href="my_settings.html" class="active">My Settings</a>
+                </nav>
+            </header>
+
+            <main>
+                <section class="settings">
+                    <h2>My Settings</h2>
+                    
+                    <!-- Personal Information Section -->
+                    <div class="section">
+                        <h3>Personal Information</h3>
+                        <form action="#" method="post">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username" value="YourUsername" />
+                            
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" value="yourname@vt.edu" />
+
+                            <label for="phone">Phone:</label>
+                            <input type="tel" id="phone" name="phone" value="(123) 456-7890" />
+
+                            <button type="submit">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Security Settings Section -->
+                    <div class="section">
+                        <h3>Security</h3>
+                        <form action="#" method="post">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" placeholder="Enter new password" />
+
+                            <label for="confirm-password">Confirm Password:</label>
+                            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm new password" />
+
+                            <button type="submit">Update Password</button>
+                        </form>
+                    </div>
+
+                    <!-- Notification Preferences Section -->
+                    <div class="section">
+                        <h3>Notification Preferences</h3>
+                        <form action="#" method="post">
+                            <label><input type="checkbox" name="email_notifications" checked /> Email Notifications</label>
+                            <label><input type="checkbox" name="sms_notifications" /> SMS Notifications</label>
+                            <label><input type="checkbox" name="push_notifications" /> Push Notifications</label>
+
+                            <button type="submit">Save Preferences</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="footer">
+                <div class="logo_and_services">
+                    <a class="logo2" href="goodbooks_index.html">
+                        <img src="images/vtlogo.png" width="40px" height="auto" alt="Virginia Tech Logo" />
+                    </a>
+                    <div>
+                        <a class="links" href="goodbooks_index.html">About</a>
+                        <a class="links" href="goodbooks_index.html">Contact</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>
