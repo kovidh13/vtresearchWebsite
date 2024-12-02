@@ -61,50 +61,31 @@
             </header>
             <div class="middle_section">
                 <div class="welcome_text_and_cta">
-                    <div class="background">
-                        <h3 class="title">Research Assistant</h3>
-                        <p class="professor">Professor: ~~~</p>
-                        <p class="department">Department: ~~~</p>
-                        <p class="employment">(Full Time) (Monday ~ Friday)</p>
-                        <button class="cta_button">View More</button>
+                    <div class="opportunities-container" id="opportunities-container">
                     </div>
-                    <div class="background">
-                        <h3 class="title">Research Assistant</h3>
-                        <p class="professor">Professor: ~~~</p>
-                        <p class="department">Department: ~~~</p>
-                        <p class="employment">(Full Time) (Monday ~ Friday)</p>
-                        <button class="cta_button">View More</button>
+                    <div class="opportunities-container" id="opportunities-container">
                     </div>
-                    <div class="background">
-                        <h3 class="title">Research Assistant</h3>
-                        <p class="professor">Professor: ~~~</p>
-                        <p class="department">Department: ~~~</p>
-                        <p class="employment">(Full Time) (Monday ~ Friday)</p>
-                        <button class="cta_button">View More</button>
+                    <div class="opportunities-container" id="opportunities-container">
                     </div>
                 </div>
     
-                <div class="infosec">
+                <div class="infosec" id="details-box">
+                    <!-- Content will be populated dynamically -->
                     <h3>Research Details</h3>
-                        <p><strong>Title:</strong> Placeholder Title</p>
-                        <p><strong>Professor:</strong> Placeholder Professor</p>
-                        <p><strong>Department:</strong> Placeholder Department</p>
-                        <p><strong>Schedule:</strong> (Full Time) (Monday ~ Friday)</p>
-                        <p><strong>Description:</strong> This section will display detailed information about the research position selected. Click on a position to see more information here.</p>
-                        <p><strong>Contact:</strong> Contact Info</p>
+                    <p><strong>Title:</strong> <span id="detail-title"></span></p>
+                    <p><strong>Description:</strong> <span id="detail-description"></span></p>
+                    <button class="cta_button" id="detail-button">View More On Virginia Tech's Website</button>
                 </div>
             </div>
             </div>
 
             <footer class="footer">
                 <div class="logo_and_services">
-                    <a class="logo2" href="goodbooks_index.html"></a>
                         <img 
                             src="images/vtlogo.png"
                             width="40px"
                             height="auto"
                         />
-                    </a>
                     <div>
                         <a class="links" href="goodbooks_index.html">About</a>
                         <a class="links" href="goodbooks_index.html">Contact</a>
@@ -112,5 +93,6 @@
                 </div>
             </footer>
         </div>
+        <script src="app.js"></script>
     </body>
 </html>
