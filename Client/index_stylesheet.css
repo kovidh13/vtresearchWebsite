@@ -1,32 +1,32 @@
-body{
-    width: 1200px;
-    height: 800px;
+body {
+    width: 100vw;
+    min-height: 100vh;
 }
 
-.frame{
-    width: 1200px;
-    height: 800px;
+.frame {
+    width: 100%;
+    min-height: 100vh;
     background-color: white;
     display: flex;
     flex-direction: column;
 }
 
-header{
+header {
     width: 100%;
-    height:5rem;
+    height: 5rem;
     background-color: white;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 15rem;
     align-items: center;
     padding: 1rem;
     margin-bottom: 1rem;
-    border-top: 5px solid rgba(134,31,65,255);
-    border-bottom: 3px solid rgba(134,31,65,255);
+    border-top: 5px solid rgba(134, 31, 65, 255);
+    border-bottom: 3px solid rgba(134, 31, 65, 255);
     font-family: 'Montserrat', sans-serif
 }
 
-.logo_and_name{
+.logo_and_name {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -39,83 +39,83 @@ a img {
     height: 100%;
 }
 
-.site_name{
+.site_name {
     font-family: 'Montserrat', sans-serif;
     font-size: 30px;
     font-weight: 650;
-    color: rgba(134,31,65,255);
+    color: rgba(134, 31, 65, 255);
     text-decoration: none;
 }
 
 .search {
     position: relative;
     width: 300px;
-  }
-  
+}
+
 input {
     width: 100%;
-    border: 2px solid rgba(134,31,65,255);
+    border: 2px solid rgba(134, 31, 65, 255);
     border-radius: 8px;
     background-color: white;
     padding: 10px 12px;
     font-size: 14px;
 }
-  
-.dropdown{
-  position : relative;
-  display : inline-block;
+
+.dropdown {
+    position: relative;
+    display: inline-block;
 }
 
-.dropdown_button{
-  border : 1px solid rgba(134,31,65,255);
-  border-radius : 4px;
-  background-color: white;
-  font-weight: 500;
-  color : rgba(134,31,65,255);
-  padding : 2px;
-  height:30px;
-  text-align: left;
-  cursor : pointer;
-  font-family: 'Montserrat', sans-serif;
-  font-size : 16px;
-  color: rgba(134,31,65,255);
+.dropdown_button {
+    border: 1px solid rgba(134, 31, 65, 255);
+    border-radius: 4px;
+    background-color: white;
+    font-weight: 500;
+    color: rgba(134, 31, 65, 255);
+    padding: 2px;
+    height: 30px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    color: rgba(134, 31, 65, 255);
 }
 
 .dropdown_button:hover {
-    background-color: rgba(134,31,65,255);
+    background-color: rgba(134, 31, 65, 255);
     color: white;
 }
 
-.dropdown-content{
-  display : none;
-  position : absolute;
-  z-index : 1;
-  font-weight: 500;
-  background-color: lightgray;
-  border-radius: 10px;
-  min-width : 115px;
+.dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    font-weight: 500;
+    background-color: lightgray;
+    border-radius: 10px;
+    min-width: 115px;
 }
 
-.dropdown-content a{
-  display : block;
-  text-decoration : none;
-  color : black;
-  font-size: 14px;
-  padding : 12px 20px;
+.dropdown-content a {
+    display: block;
+    text-decoration: none;
+    color: black;
+    font-size: 14px;
+    padding: 12px 20px;
 }
 
-.dropdown-content a:hover{
-  background-color : rgba(134,31,65,255);
-  border-radius: 10px;
+.dropdown-content a:hover {
+    background-color: rgba(134, 31, 65, 255);
+    border-radius: 10px;
 }
 
 .dropdown:hover .dropdown-content {
-  display: block;
+    display: block;
 }
 
-.login_and_cart{
+.login_and_cart {
     align-items: center;
-    margin-right:20px;
+    margin-right: 20px;
 }
 
 button.researchOpportunities {
@@ -123,24 +123,24 @@ button.researchOpportunities {
     background-color: white;
     align-items: center;
     font-family: 'Montserrat', sans-serif;
-    font-size : 16px;
-    color: rgba(134,31,65,255);
+    font-size: 16px;
+    color: rgba(134, 31, 65, 255);
     width: 150px;
-    cursor : pointer;
+    cursor: pointer;
     font-weight: 500;
 }
 
-.login_button{
+.login_button {
     border-style: none;
     background-color: white;
     font-family: 'Montserrat', sans-serif;
-    font-size : 16px;
-    color: rgba(134,31,65,255);
-    cursor : pointer;
+    font-size: 16px;
+    color: rgba(134, 31, 65, 255);
+    cursor: pointer;
     font-weight: 500;
 }
 
-.cart_button{
+.cart_button {
     border-style: none;
     background-color: white;
     display: flex;
@@ -148,48 +148,78 @@ button.researchOpportunities {
     justify-content: center;
     align-items: center;
     width: 40px;
-    cursor : pointer;
+    cursor: pointer;
 }
 
-.itemcount{
-    position:absolute;
+.itemcount {
+    position: absolute;
     margin-top: 10px;
     margin-left: 5px;
     border-radius: 5px;
-    width:18px;
-    height:15px;
+    width: 18px;
+    height: 15px;
     font-family: 'Montserrat', sans-serif;
     background-color: white;
     font-size: 14px;
 }
 
 
-.middle_section{
+.middle_section {
     display: flex;
-    gap: 2rem;
+    gap: 12rem;
 }
 
-.welcome_text_and_cta{
-    height:100%;
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+#opportunities-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    max-width: 2000px;
 }
 
-.infosec{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 40rem;
-    height: 37rem;
-    margin-bottom: 1rem;
-    padding:2.5rem;
-    border: 3px solid rgba(134,31,65,255);
+/* Opportunity Box */
+.opportunity-box {
+    border: 3px solid rgba(134, 31, 65, 255);
     border-radius: 20px;
+    padding: 20px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.background{
+/* Opportunity Title */
+.opportunity-title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+/* Opportunity Description */
+.opportunity-description {
+    margin-bottom: 10px;
+}
+
+/* Call-to-Action Button */
+.cta_button {
+    align-self: flex-start;
+    border: none;
+    border-radius: 20px;
+    background-color: rgb(167, 60, 60);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.cta_button:hover {
+    background-color: rgba(134, 31, 65, 255);
+}
+
+
+
+.background {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -197,8 +227,8 @@ button.researchOpportunities {
     height: 8rem;
     margin-left: 3rem;
     margin-bottom: 1rem;
-    padding:2.5rem;
-    border: 3px solid rgba(134,31,65,255);
+    padding: 2.5rem;
+    border: 3px solid rgba(134, 31, 65, 255);
     border-radius: 20px;
 }
 
@@ -218,117 +248,52 @@ p.employment {
     margin-top: 0px;
 }
 
-.text{
+.text {
     font-size: 30px;
     font-style: italic;
     margin: 10px;
 }
 
-.cta_button{
+.cta_button {
     border-style: 1px solid darkgreen;
     border-radius: 20px;
     background-color: rgb(167, 60, 60);
-    
+
     font-family: 'Montserrat', sans-serif;
-    font-size : 16px;
+    font-size: 16px;
     color: white;
     width: 150px;
-    height:40px;
-    cursor : pointer;
-}
-
-
-
-
-.bestsellers_title{
     height: 40px;
-    margin-top: 1px;
-    margin-bottom: 1px;
-    margin-left:55px;
-    font-size:20px;
-    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
 }
 
-.bestsellers{
-    height:350px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: flex-start;
-}
-
-.book_box{
-    margin-top:10px;
-    background-color: rgb(189, 154, 109);
-    width: 170px;
-    height: 300px;
-    border: 2px solid green;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.book_titles{
-    font-size: 15px;
-    width: 140px;
-    height: 40px;
-    margin:2px;
-    text-align: center;
-}
-
-.read_now_button{
-    position: absolute;
-}
-
-.authors{
-    font-size: 14px;
-    margin:1px;
-    font-weight: 500;
-}
-
-.prices{
-    font-size: 14px;
-    margin:1px;
-    font-weight: 600;
-}
-
-.add_to_cart_button{
-    margin-bottom: 2px;
-}
-
-
-
-
-footer{
+footer {
     width: 100%;
-    height:40px;
+    height: 40px;
     background-color: white;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-top: 3px solid rgba(134,31,65,255);
-    border-bottom: 5px solid rgba(134,31,65,255);
+    border-top: 3px solid rgba(134, 31, 65, 255);
+    border-bottom: 5px solid rgba(134, 31, 65, 255);
 }
 
-.logo_and_services{
-    display:flex;
+.logo_and_services {
+    display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
 }
 
-.links{
-    font-size:16px;
-    margin:5px;
+.links {
+    font-size: 16px;
+    margin: 5px;
     font-family: 'Montserrat', sans-serif;
-    color:black;
+    color: black;
     text-decoration: none;
 }
 
 #details-box {
-    display: none; 
+    display: none;
 }

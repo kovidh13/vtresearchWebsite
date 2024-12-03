@@ -1,98 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="description" content="The homepage for VT Research Opportunities Website">
-        <title>VT_Research</title>
 
-        <link
-            href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
-            rel="stylesheet"
-        />
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="The homepage for VT Research Opportunities Website">
+    <title>VT_Research</title>
 
-        <link rel="stylesheet" href="index_stylesheet.css" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
 
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    </head>
+    <link rel="stylesheet" href="index_stylesheet.css" />
 
-    <body>
-        <div class="frame">
-            <header class="header"> 
-                <div class="logo_and_name">
-                    <a href="researchIndex.html">
-                        <img 
-                            src="images/vtlogo.png"
-                        />
-                    </a>                   
-                    <a class="site_name" href="researchIndex.html">Virginia Tech</a>
-                </div>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
 
-                <div class="search">
-                    <input type="text" placeholder="Search">
-                    <img 
-                        src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png"
-                        style="position: absolute;
+<body>
+    <div class="frame">
+        <header class="header">
+            <div class="logo_and_name">
+                <a href="researchIndex.html">
+                    <img src="images/vtlogo.png" />
+                </a>
+                <a class="site_name" href="researchIndex.html">Virginia Tech</a>
+            </div>
+
+            <div class="search">
+                <input type="text" placeholder="Search">
+                <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png" style="position: absolute;
                         width:17px;
                         top:11px;
                         right:-15px;
-                        margin:0;"
-                    />
-                </div>
-                <button class="researchOpportunities">Research Opportunities</button>
-                <div class="login_and_cart">
-                    <button class="login_button">
-                        Log In
-                    </button>
-                </div>
-                <div class="dropdown">
-                    <button class="dropdown_button">
-                        <img 
-                            src="images/dropdown.png"
-                            width="10px"
-                            height="auto"
-                        />
-                        &#9776</button>
-                    <div class="dropdown-content">
-                        <a href="goodbooks_category.html">My Settings</a>
-                        <a href="goodbooks_category.html">My Resumes</a>
-                        <a href="goodbooks_category.html">My Applications</a>
-                    </div>
-                </div>
-            </header>
-            <div class="middle_section">
-                <div class="welcome_text_and_cta">
-                    <div class="opportunities-container" id="opportunities-container">
-                    </div>
-                    <div class="opportunities-container" id="opportunities-container">
-                    </div>
-                    <div class="opportunities-container" id="opportunities-container">
-                    </div>
-                </div>
-    
-                <div class="infosec" id="details-box">
-                    <!-- Content will be populated dynamically -->
-                    <h3>Research Details</h3>
-                    <p><strong>Title:</strong> <span id="detail-title"></span></p>
-                    <p><strong>Description:</strong> <span id="detail-description"></span></p>
-                    <button class="cta_button" id="detail-button">View More On Virginia Tech's Website</button>
+                        margin:0;" />
+            </div>
+            <button class="researchOpportunities">Research Opportunities</button>
+            <div class="login_and_cart">
+                <button class="login_button">
+                    Log In
+                </button>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown_button">
+                    <img src="images/dropdown.png" width="10px" height="auto" />
+                    &#9776</button>
+                <div class="dropdown-content">
+                    <a href="goodbooks_category.html">My Settings</a>
+                    <a href="goodbooks_category.html">My Resumes</a>
+                    <a href="goodbooks_category.html">My Applications</a>
                 </div>
             </div>
+        </header>
+        <div class="middle_section">
+            <div id="opportunities-container">
+                <!-- Opportunity boxes will be injected here by JavaScript -->
             </div>
-
-            <footer class="footer">
-                <div class="logo_and_services">
-                        <img 
-                            src="images/vtlogo.png"
-                            width="40px"
-                            height="auto"
-                        />
-                    <div>
-                        <a class="links" href="goodbooks_index.html">About</a>
-                        <a class="links" href="goodbooks_index.html">Contact</a>
-                    </div>
-                </div>
-            </footer>
         </div>
-        <script src="app.js"></script>
-    </body>
+    </div>
+
+    <footer class="footer">
+        <div class="logo_and_services">
+            <img src="images/vtlogo.png" width="40px" height="auto" />
+            <div>
+                <a class="links" href="goodbooks_index.html">About</a>
+                <a class="links" href="goodbooks_index.html">Contact</a>
+            </div>
+        </div>
+    </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+
 </html>

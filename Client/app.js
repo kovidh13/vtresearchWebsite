@@ -1,4 +1,6 @@
-const container = document.getElementsByClassName('opportunities-container')[0];
+// Select the container using getElementById
+const container = document.getElementById('opportunities-container');
+
 // Fetch opportunities from the backend
 fetch('/api/opportunities')
   .then(response => response.json())
@@ -8,35 +10,35 @@ fetch('/api/opportunities')
 
     // Loop through each opportunity
     data.forEach(opportunity => {
-      // Create the outer div with class 'background'
+      // Create the outer div with class 'opportunity-box'
       const opportunityDiv = document.createElement('div');
-      opportunityDiv.className = 'background';
+      opportunityDiv.className = 'opportunity-box';
 
       // Create the title
       const title = document.createElement('h3');
-      title.className = 'title';
+      title.className = 'opportunity-title';
       title.textContent = opportunity.title;
 
-      // Create the description
-      const description = document.createElement('p');
-      description.className = 'professor';
-      description.textContent = `Description: ${opportunity.description || 'N/A'}`;
-
-      // Create the button
-      const button = document.createElement('button');
-      button.className = 'cta_button';
-      button.textContent = 'View More';
-
-      // Attach an event listener to the button
-      button.addEventListener('click', () => {
-        // Function to display detailed information
-        showDetails(opportunity);
-      });
-
-      // Append elements to the opportunityDiv
+      // Append the title to the opportunityDiv
       opportunityDiv.appendChild(title);
-      opportunityDiv.appendChild(description);
-      opportunityDiv.appendChild(button);
+
+      // Create the description if available
+      if (opportunity.description && opportunity.description !== 'N/A') {
+        const description = document.createElement('p');
+        description.className = 'opportunity-description';
+        description.textContent = opportunity.description;
+        opportunityDiv.appendChild(description);
+      }
+
+      // Create the link
+      const link = document.createElement('a');
+      link.className = 'cta_button';
+      link.textContent = 'View More on VT Website';
+      link.href = opportunity.link;
+      link.target = '_blank'; // Open in a new tab
+
+      // Append the link to the opportunityDiv
+      opportunityDiv.appendChild(link);
 
       // Append opportunityDiv to the container
       container.appendChild(opportunityDiv);
@@ -45,32 +47,3 @@ fetch('/api/opportunities')
   .catch(error => {
     console.error('Error fetching opportunities:', error);
   });
-
-
-  function showDetails(opportunity) {
-    // Get the details box element
-    const detailsBox = document.getElementById('details-box');
-  
-    // Make the details box visible
-    detailsBox.style.display = 'block';
-  
-    // Update the title
-    const detailTitle = document.getElementById('detail-title');
-    detailTitle.textContent = opportunity.title;
-  
-    // Update the description
-    const detailDescription = document.getElementById('detail-description');
-    detailDescription.textContent = opportunity.fullDescription || opportunity.description || 'N/A';
-  
-    // Update the "View More On Virginia Tech's Website" button
-    const detailButton = document.getElementById('detail-button');
-    if (opportunity.link) {
-      detailButton.style.display = 'inline-block';
-      detailButton.onclick = () => {
-        window.open(opportunity.link, '_blank');
-      };
-    } else {
-      detailButton.style.display = 'none';
-    }
-  }
-  

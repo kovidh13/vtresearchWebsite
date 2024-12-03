@@ -19,38 +19,33 @@ async function fetchData() {
   
     const $ = cheerio.load(html);
     const opportunities = [];
-    const baseUrl = 'https://www.research.undergraduate.vt.edu';
+    const baseUrl = 'https://research.undergraduate.vt.edu';
   
-    // Select each opportunity item
-    $('li.item.general-page').each((index, element) => {
-      // Extract the title
-      const title = $(element)
-        .find('a.vt-list-item-title-link')
-        .text()
-        .trim();
+    // Select the main <ul> element
+    const mainList = $('ul.vt-subnav-droplist#vt_sub_pages');
   
-      // Extract the relative link and construct the full URL
-      const relativeLink = $(element)
-        .find('a.vt-list-item-title-link')
-        .attr('href');
+    // Find the active <li> element that contains the opportunities
+    const activeItem = mainList.find('li.vt-subnav-droplist-item.active');
+    const opportunitiesList = activeItem.find('ul.vt-subnav-children');
+  
+    // Iterate over each opportunity item
+    opportunitiesList.find('li.vt-subnav-droplist-item').each((index, element) => {
+      const titleElement = $(element).find('a.vt-subnav-droplist-item');
+      const title = titleElement.text().trim();
+      const relativeLink = titleElement.attr('href');
       const link = relativeLink ? new URL(relativeLink, baseUrl).href : null;
   
-      // Extract the description
-      const description = $(element)
-        .find('p.vt-list-description.vt-list-item-description')
-        .text()
-        .trim();
-  
-      // Add the opportunity to the array
       opportunities.push({
         title,
-        description,
         link,
       });
     });
   
     return opportunities;
   }
+  
+  module.exports = { scrapeOpportunities };
+  
   
   
 
