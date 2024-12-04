@@ -16,7 +16,7 @@ app.use(bodyParser.json()); // Parse JSON bodies
 app.use(express.static(path.join(__dirname, '../Client'))); // Serve static files from Client 
 
 // MongoDB Connection String with Database Name
-const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@v@vtresearch.oow2p.mongodb.net/?retryWrites=true&w=majority&appName=vtresearchdatabase';
+const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@vtresearch.oow2p.mongodb.net/vtresearchdatabase?retryWrites=true&w=majority&appName=vtresearch';
 
 // JWT Secret Key
 const JWT_SECRET = 'secret_key'; 
@@ -46,7 +46,7 @@ const researchOpportunitySchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
-const ResearchOpportunity = mongoose.model('ResearchOpportunity', researchOpportunitySchema, 'ResearchOpportunities'); // Specify collection name
+const ResearchOpportunity = mongoose.model('ResearchOpportunity', researchOpportunitySchema, 'researchopportunities'); // Specify collection name
 
 // Routes
 
