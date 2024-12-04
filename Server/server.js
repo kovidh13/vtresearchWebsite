@@ -2,6 +2,7 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -21,6 +22,53 @@ const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@vtresearch.oow2p.mongodb.ne
 // JWT Secret Key
 const JWT_SECRET = 'secret_key';
 
+const authenticate = (req, res, next) => {
+  // ... your existing authentication code ...
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error('Invalid token:', err);
+    res.status(401).json({ message: 'Unauthorized: Invalid token' });
+  }
+};
+// Set up storage engine
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/cvs/'); 
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    // Use the user's ID to prevent filename conflicts
+    cb(null, req.user.userId + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+// Initialize upload
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit files to 5MB
+  fileFilter: function (req, file, cb) {
+    // Accept PDF and TXT files only
+    const filetypes = /pdf|txt/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only PDF and TXT files are allowed.'));
+    }
+  }
+});
+
+
 // Connect to MongoDB Atlas
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -32,9 +80,15 @@ mongoose.connect(MONGODB_URI, {
 // Define Schemas and Models
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true }, // Added email field
+  email: { type: String, required: true, unique: true }, // Ensure email field exists
   password: { type: String, required: true },
   role: { type: String, enum: ['student', 'professor'], required: true },
+  cvs: [
+    {
+      filename: String,
+      uploadedAt: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 
@@ -81,6 +135,67 @@ app.get('/api/opportunities/:id', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+// returns the list of CVs uploaded by the user
+app.get('/api/my-cvs', authenticate, async (req, res) => {
+  if (req.user.role !== 'student') {
+    return res.status(403).json({ message: 'Forbidden: Only students can access this' });
+  }
+
+  try {
+    const user = await User.findById(req.user.userId);
+    res.json(user.cvs);
+  } catch (err) {
+    console.error('Error fetching CVs:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+app.get('/download-cv/:filename', authenticate, async (req, res) => {
+  const filename = req.params.filename;
+
+  try {
+    // Verify that the user owns the CV
+    const user = await User.findById(req.user.userId);
+    const cv = user.cvs.find(cv => cv.filename === filename);
+
+    if (!cv) {
+      return res.status(403).json({ message: 'Forbidden: You do not have access to this CV' });
+    }
+
+    const filePath = path.join(__dirname, 'uploads/cvs', filename);
+    res.sendFile(filePath);
+  } catch (err) {
+    console.error('Error downloading CV:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// Protected route for students to upload their CV
+app.post('/api/upload-cv', authenticate, function (req, res, next) {
+  upload.single('cv')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ message: err.message });
+    } else if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
+  if (req.user.role !== 'student') {
+    return res.status(403).json({ message: 'Forbidden: Only students can upload CVs' });
+  }
+
+  try {
+    // Add the new CV to the user's 'cvs' array
+    await User.findByIdAndUpdate(req.user.userId, {
+      $push: { cvs: { filename: req.file.filename, uploadedAt: new Date() } },
+    });
+    res.status(200).json({ message: 'CV uploaded successfully' });
+  } catch (err) {
+    console.error('Error uploading CV:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
 
 // User Registration with Password Hashing
 app.post('/api/register', async (req, res) => {
@@ -99,6 +214,7 @@ app.post('/api/register', async (req, res) => {
     res.status(400).json({ message: 'Invalid data' });
   }
 });
+
 
 
 // User Login with Password Verification
@@ -123,24 +239,6 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
-
-
-// Middleware to authenticate JWT tokens
-const authenticate = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized: No token provided' });
-  }
-  const token = authHeader.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    console.error('Invalid token:', err);
-    res.status(401).json({ message: 'Unauthorized: Invalid token' });
-  }
-};
 
 // Protected route to create a new research opportunity (Professors only)
 app.post('/api/opportunities', authenticate, async (req, res) => {

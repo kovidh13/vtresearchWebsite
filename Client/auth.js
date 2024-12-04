@@ -1,6 +1,4 @@
-// Client/auth.js
-
-// Function to get user info from token
+// Ensure getUserFromToken is globally accessible
 function getUserFromToken() {
     const token = localStorage.getItem('token');
     if (!token) return null;
@@ -41,6 +39,13 @@ function getUserFromToken() {
           const postOpportunityMenus = document.querySelectorAll('.post_opportunity_menu');
           postOpportunityMenus.forEach(menu => menu.style.display = 'block');
         }
+  
+        // Show 'My CV' menu item for students
+        if (user.role === 'student') {
+          const myCVMenus = document.querySelectorAll('.my_cv_menu');
+          myCVMenus.forEach(menu => menu.style.display = 'block');
+        }
+  
       } else {
         // User is not logged in
         loginButtons.forEach(btn => btn.style.display = 'block');
@@ -51,6 +56,10 @@ function getUserFromToken() {
         // Hide 'Post New Research Opportunity' menu item
         const postOpportunityMenus = document.querySelectorAll('.post_opportunity_menu');
         postOpportunityMenus.forEach(menu => menu.style.display = 'none');
+  
+        // Hide 'My CV' menu item
+        const myCVMenus = document.querySelectorAll('.my_cv_menu');
+        myCVMenus.forEach(menu => menu.style.display = 'none');
       }
     }
   
