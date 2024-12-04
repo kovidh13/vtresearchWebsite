@@ -1,0 +1,158 @@
+<!-- Client/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Register for VT Research Opportunities">
+    <title>Register - VT Research Opportunities</title>
+
+    <!-- External CSS Libraries -->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="index_stylesheet.css" />
+    <style>
+      /* Additional styling specific to the registration page */
+      .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 5rem - 40px); /* Adjust based on header and footer heights */
+        background-color: #f5f5f5;
+      }
+
+      .register-form {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        width: 400px;
+      }
+
+      .register-form h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: rgba(134, 31, 65, 255);
+      }
+
+      .register-form input, .register-form select {
+        width: 100%;
+        padding: 12px 15px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+
+      .register-form button {
+        width: 100%;
+        padding: 12px;
+        background-color: rgba(134, 31, 65, 255);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .register-form button:hover {
+        background-color: #a72555;
+      }
+
+      .message {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .error {
+        color: red;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .login-link a {
+        color: rgba(134, 31, 65, 255);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .login-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo_and_name">
+                <a href="index.html">
+                    <img src="images/vtlogo.png" alt="Virginia Tech Logo" />
+                </a>
+                <a class="site_name" href="researchIndex.html">Virginia Tech</a>
+            </div>
+            <button class="researchOpportunities">Research Opportunities</button>
+            <div class="login_and_cart">
+                <button id="logout-button" onclick="logout()" style="display: none;">
+                  Logout
+                </button>
+                <button id="create-opportunity-button" onclick="createOpportunity()" style="display: none;">
+                  Create New Opportunity
+                </button>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown_button">
+                    <img src="images/dropdown.png" width="10px" height="auto" alt="Dropdown Icon" />
+                    &#9776;
+                </button>
+                <div class="dropdown-content">
+                    <a href="#">My Settings</a>
+                    <a href="#">My Resumes</a>
+                    <a href="#">My Applications</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Registration Form -->
+        <div class="register-container">
+            <div class="register-form">
+                <h2>Register</h2>
+                <div id="register-message" class="message"></div>
+                <input type="text" id="register-username" placeholder="Username" required />
+                <input type="email" id="register-email" placeholder="Email" required />
+                <input type="password" id="register-password" placeholder="Password" required />
+                <select id="register-role" required>
+                    <option value="">Select Role</option>
+                    <option value="student">Student</option>
+                    <option value="professor">Professor</option>
+                </select>
+                <button onclick="register()">Register</button>
+                <div class="login-link">
+                    Already have an account? <a href="login.html">Login here</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="logo_and_services">
+                <img src="images/vtlogo.png" width="40px" height="auto" alt="Virginia Tech Logo" />
+                <div>
+                    <a class="links" href="#">About</a>
+                    <a class="links" href="#">Contact</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="register.js"></script>
+</body>
+</html>

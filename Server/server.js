@@ -9,9 +9,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const app = express();
-const PORT = 3000; 
+const PORT = 3000;
 
-app.use(cors()); 
+app.use(cors());
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(express.static(path.join(__dirname, '../Client'))); // Serve static files from Client 
 
@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, '../Client'))); // Serve static file
 const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@vtresearch.oow2p.mongodb.net/vtresearchdatabase?retryWrites=true&w=majority&appName=vtresearch';
 
 // JWT Secret Key
-const JWT_SECRET = 'secret_key'; 
+const JWT_SECRET = 'secret_key';
 
 // Connect to MongoDB Atlas
 mongoose.connect(MONGODB_URI, {
@@ -32,9 +32,11 @@ mongoose.connect(MONGODB_URI, {
 // Define Schemas and Models
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
-  password: { type: String, required: true }, // Hashed passwords
+  email: { type: String, required: true, unique: true }, // Added email field
+  password: { type: String, required: true },
   role: { type: String, enum: ['student', 'professor'], required: true },
 });
+
 
 const researchOpportunitySchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -82,13 +84,14 @@ app.get('/api/opportunities/:id', async (req, res) => {
 
 // User Registration with Password Hashing
 app.post('/api/register', async (req, res) => {
-  const { username, password, role } = req.body;
+  const { username, email, password, role } = req.body;
   try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser) return res.status(400).json({ message: 'Username already exists' });
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser)
+      return res.status(400).json({ message: 'Username or email already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword, role });
+    const newUser = new User({ username, email, password: hashedPassword, role });
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
@@ -96,6 +99,7 @@ app.post('/api/register', async (req, res) => {
     res.status(400).json({ message: 'Invalid data' });
   }
 });
+
 
 // User Login with Password Verification
 app.post('/api/login', async (req, res) => {
@@ -108,7 +112,7 @@ app.post('/api/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user._id, username: user.username, role: user.role },
       JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -119,6 +123,7 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
 
 // Middleware to authenticate JWT tokens
 const authenticate = (req, res, next) => {

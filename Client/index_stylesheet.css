@@ -82,6 +82,22 @@ input {
     font-weight: 500;
 }
 
+/* Style for user role display */
+.user_info {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    /* Pushes the user info to the right */
+}
+
+.user_role {
+    font-size: 16px;
+    color: #862141;
+    /* Use your site's color scheme */
+    margin-right: 15px;
+}
+
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -140,7 +156,8 @@ input {
     width: 30%;
     border-right: 1px solid #ccc;
     overflow-y: auto;
-    max-height: calc(100vh - 8rem); /* Adjust based on header and footer height */
+    max-height: calc(100vh - 8rem);
+    /* Adjust based on header and footer height */
 }
 
 .opportunity_item {

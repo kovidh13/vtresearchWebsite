@@ -1,6 +1,7 @@
 <!-- Client/researchIndex.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="The homepage for VT Research Opportunities Website">
@@ -13,6 +14,7 @@
     <!-- Local CSS -->
     <link rel="stylesheet" href="index_stylesheet.css" />
 </head>
+
 <body>
     <div class="frame">
         <!-- Header -->
@@ -24,12 +26,19 @@
                 <a class="site_name" href="researchIndex.html">Virginia Tech</a>
             </div>
 
-            <div class="search">
+            <div class="user_info">
+                <span class="user_role" style="display: none;"></span>
             </div>
             <button class="researchOpportunities">Research Opportunities</button>
             <div class="login_and_cart">
-                <button class="login_button">
-                    Log In
+                <!-- Wrap the button inside an anchor tag -->
+                <a href="login.html">
+                    <button class="login_button">
+                        Log In
+                    </button>
+                </a>
+                <button class="logout_button" onclick="logout()" style="display: none;">
+                    Logout
                 </button>
             </div>
             <div class="dropdown">
@@ -39,8 +48,9 @@
                 </button>
                 <div class="dropdown-content">
                     <a href="#">My Settings</a>
-                    <a href="#">My Resumes</a>
+                    <a href="#">My CVs</a>
                     <a href="#">My Applications</a>
+                    <a href="postOpportunity.html" class="post_opportunity_menu" style="display: none;">Post New Research Opportunity</a>
                 </div>
             </div>
         </header>
@@ -74,6 +84,8 @@
             </div>
         </footer>
     </div>
+    <script src="auth.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>
