@@ -1,9 +1,19 @@
-// app.js
+// Client/app.js
 
 document.addEventListener('DOMContentLoaded', function() {
   // Fetch opportunities from the backend
-  fetch('/api/opportunities')
-    .then(response => response.json())
+  fetch('/api/opportunities', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (${response.status})`);
+      }
+      return response.json();
+    })
     .then(data => {
       displayOpportunityList(data);
 
@@ -16,10 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (firstItem) {
           firstItem.classList.add('active');
         }
+      } else {
+        displayError('No research opportunities available at the moment.');
       }
     })
     .catch(error => {
       console.error('Error fetching opportunities:', error);
+      displayError('Failed to load research opportunities. Please try again later.');
     });
 
   // Function to display the list of opportunities
@@ -37,10 +50,12 @@ document.addEventListener('DOMContentLoaded', function() {
       title.className = 'opportunity_item_title';
       title.textContent = opportunity.title;
 
-      // Optionally, add the professor name
+      // Add the professor name using 'postedBy.username'
       const professor = document.createElement('p');
       professor.className = 'opportunity_item_professor';
-      professor.textContent = opportunity.professor ? `Professor: ${opportunity.professor}` : '';
+      professor.textContent = opportunity.postedBy && opportunity.postedBy.username
+        ? `Professor: ${opportunity.postedBy.username}`
+        : 'Professor: N/A';
 
       // Append title and professor to the item
       item.appendChild(title);
@@ -71,7 +86,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     detailTitle.textContent = opportunity.title;
     detailDescription.textContent = opportunity.fullDescription || opportunity.description || 'No description available.';
-    detailProfessor.textContent = opportunity.professor ? `Professor: ${opportunity.professor}` : '';
-    detailDepartment.textContent = opportunity.department ? `Department: ${opportunity.department}` : '';
+    detailProfessor.textContent = opportunity.postedBy && opportunity.postedBy.username
+      ? `Professor: ${opportunity.postedBy.username}`
+      : 'Professor: N/A';
+    detailDepartment.textContent = opportunity.department
+      ? `Department: ${opportunity.department}`
+      : 'Department: N/A';
+  }
+
+  // Function to display error messages
+  function displayError(message) {
+    const listContainer = document.getElementById('opportunities-list');
+    listContainer.innerHTML = `<p class="error">${message}</p>`;
   }
 });

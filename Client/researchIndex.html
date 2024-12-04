@@ -1,4 +1,4 @@
-<!-- researchIndex.html -->
+<!-- Client/researchIndex.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +6,12 @@
     <meta name="description" content="The homepage for VT Research Opportunities Website">
     <title>VT Research Opportunities</title>
 
+    <!-- External CSS Libraries -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
-    <link rel="stylesheet" href="index_stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="index_stylesheet.css" />
 </head>
 <body>
     <div class="frame">
@@ -16,18 +19,14 @@
         <header class="header">
             <div class="logo_and_name">
                 <a href="researchIndex.html">
-                    <img src="images/vtlogo.png" />
+                    <img src="images/vtlogo.png" alt="Virginia Tech Logo" />
                 </a>
                 <a class="site_name" href="researchIndex.html">Virginia Tech</a>
             </div>
 
             <div class="search">
                 <input type="text" placeholder="Search">
-                <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png" style="position: absolute;
-                        width:17px;
-                        top:11px;
-                        right:-15px;
-                        margin:0;" />
+                <img src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png" alt="Search Icon" style="position: absolute; width:17px; top:11px; right:-15px; margin:0;" />
             </div>
             <button class="researchOpportunities">Research Opportunities</button>
             <div class="login_and_cart">
@@ -37,7 +36,7 @@
             </div>
             <div class="dropdown">
                 <button class="dropdown_button">
-                    <img src="images/dropdown.png" width="10px" height="auto" />
+                    <img src="images/dropdown.png" width="10px" height="auto" alt="Dropdown Icon" />
                     &#9776;
                 </button>
                 <div class="dropdown-content">
@@ -53,6 +52,7 @@
             <!-- Left Column: Opportunities List -->
             <div class="opportunities_list" id="opportunities-list">
                 <!-- Opportunity items will be injected here by JavaScript -->
+                <p>Loading research opportunities...</p>
             </div>
 
             <!-- Right Column: Opportunity Details -->
@@ -60,15 +60,15 @@
                 <!-- Details of the selected opportunity will be displayed here -->
                 <h2 id="detail-title">Select an Opportunity</h2>
                 <p id="detail-description">Details will appear here when you select an opportunity.</p>
-                <p id="detail-professor"></p>
-                <p id="detail-department"></p>
+                <p id="detail-professor">Professor: N/A</p>
+                <p id="detail-department">Department: N/A</p>
             </div>
         </div>
 
         <!-- Footer -->
         <footer class="footer">
             <div class="logo_and_services">
-                <img src="images/vtlogo.png" width="40px" height="auto" />
+                <img src="images/vtlogo.png" width="40px" height="auto" alt="Virginia Tech Logo" />
                 <div>
                     <a class="links" href="#">About</a>
                     <a class="links" href="#">Contact</a>

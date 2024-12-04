@@ -9,15 +9,14 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const app = express();
-const PORT = 3000; // Directly set the port
+const PORT = 3000; 
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '../Client')));
+app.use(cors()); 
+app.use(bodyParser.json()); // Parse JSON bodies
+app.use(express.static(path.join(__dirname, '../Client'))); // Serve static files from Client 
 
 // MongoDB Connection String with Database Name
-const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@vtresearch.oow2p.mongodb.net/?retryWrites=true&w=majority&appName=vtresearch';
+const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@v@vtresearch.oow2p.mongodb.net/?retryWrites=true&w=majority&appName=vtresearchdatabase';
 
 // JWT Secret Key
 const JWT_SECRET = 'secret_key'; 
@@ -47,7 +46,7 @@ const researchOpportunitySchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
-const ResearchOpportunity = mongoose.model('ResearchOpportunity', researchOpportunitySchema);
+const ResearchOpportunity = mongoose.model('ResearchOpportunity', researchOpportunitySchema, 'ResearchOpportunities'); // Specify collection name
 
 // Routes
 
@@ -58,23 +57,25 @@ app.get('/', (req, res) => {
 
 // API Routes
 
-// Get all research opportunities
+// Get all research opportunities with populated 'postedBy' field
 app.get('/api/opportunities', async (req, res) => {
   try {
-    const opportunities = await ResearchOpportunity.find();
+    const opportunities = await ResearchOpportunity.find().populate('postedBy', 'username');
     res.json(opportunities);
   } catch (err) {
+    console.error('Error fetching opportunities:', err);
     res.status(500).json({ message: 'Server Error' });
   }
 });
 
-// Get a single research opportunity by ID
+// Get a single research opportunity by ID with populated 'postedBy' field
 app.get('/api/opportunities/:id', async (req, res) => {
   try {
-    const opportunity = await ResearchOpportunity.findById(req.params.id);
+    const opportunity = await ResearchOpportunity.findById(req.params.id).populate('postedBy', 'username');
     if (!opportunity) return res.status(404).json({ message: 'Opportunity not found' });
     res.json(opportunity);
   } catch (err) {
+    console.error('Error fetching opportunity:', err);
     res.status(500).json({ message: 'Server Error' });
   }
 });
@@ -91,6 +92,7 @@ app.post('/api/register', async (req, res) => {
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
+    console.error('Error registering user:', err);
     res.status(400).json({ message: 'Invalid data' });
   }
 });
@@ -113,6 +115,7 @@ app.post('/api/login', async (req, res) => {
 
     res.json({ token });
   } catch (err) {
+    console.error('Error during login:', err);
     res.status(500).json({ message: 'Server Error' });
   }
 });
@@ -121,7 +124,7 @@ app.post('/api/login', async (req, res) => {
 const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
   }
   const token = authHeader.split(' ')[1];
   try {
@@ -129,7 +132,8 @@ const authenticate = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
+    console.error('Invalid token:', err);
+    res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 };
 
@@ -144,13 +148,13 @@ app.post('/api/opportunities', authenticate, async (req, res) => {
       title,
       description,
       fullDescription,
-      professor: req.user.userId, // Adjust as needed
       department,
-      postedBy: req.user.userId,
+      postedBy: req.user.userId, // Correctly assign to 'postedBy'
     });
     const savedOpportunity = await newOpportunity.save();
     res.status(201).json(savedOpportunity);
   } catch (err) {
+    console.error('Error creating opportunity:', err);
     res.status(400).json({ message: 'Invalid data' });
   }
 });
