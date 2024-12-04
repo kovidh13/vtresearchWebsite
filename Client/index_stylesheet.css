@@ -1,14 +1,23 @@
+/* index_stylesheet.css */
+
+/* Reset default margins and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body and Frame */
 body {
-    width: 100vw;
+    width: 100%;
     min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .frame {
-    width: 100%;
-    min-height: 100vh;
-    background-color: white;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 header {
@@ -16,31 +25,25 @@ header {
     height: 5rem;
     background-color: white;
     display: flex;
-    flex-direction: row;
-    gap: 15rem;
     align-items: center;
     padding: 1rem;
-    margin-bottom: 1rem;
     border-top: 5px solid rgba(134, 31, 65, 255);
     border-bottom: 3px solid rgba(134, 31, 65, 255);
-    font-family: 'Montserrat', sans-serif
+    font-family: 'Montserrat', sans-serif;
 }
 
 .logo_and_name {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
     align-items: center;
     gap: 1rem;
 }
 
 a img {
     width: 55px;
-    height: 100%;
+    height: auto;
 }
 
 .site_name {
-    font-family: 'Montserrat', sans-serif;
     font-size: 30px;
     font-weight: 650;
     color: rgba(134, 31, 65, 255);
@@ -50,15 +53,33 @@ a img {
 .search {
     position: relative;
     width: 300px;
+    margin-left: auto;
 }
 
 input {
     width: 100%;
     border: 2px solid rgba(134, 31, 65, 255);
     border-radius: 8px;
-    background-color: white;
     padding: 10px 12px;
     font-size: 14px;
+}
+
+.researchOpportunities {
+    border: none;
+    background-color: white;
+    font-size: 16px;
+    color: rgba(134, 31, 65, 255);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.login_button {
+    border: none;
+    background-color: white;
+    font-size: 16px;
+    color: rgba(134, 31, 65, 255);
+    cursor: pointer;
+    font-weight: 500;
 }
 
 .dropdown {
@@ -72,13 +93,9 @@ input {
     background-color: white;
     font-weight: 500;
     color: rgba(134, 31, 65, 255);
-    padding: 2px;
-    height: 30px;
-    text-align: left;
+    padding: 5px;
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
     font-size: 16px;
-    color: rgba(134, 31, 65, 255);
 }
 
 .dropdown_button:hover {
@@ -90,10 +107,10 @@ input {
     display: none;
     position: absolute;
     z-index: 1;
-    font-weight: 500;
-    background-color: lightgray;
-    border-radius: 10px;
-    min-width: 115px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 150px;
 }
 
 .dropdown-content a {
@@ -101,170 +118,65 @@ input {
     text-decoration: none;
     color: black;
     font-size: 14px;
-    padding: 12px 20px;
+    padding: 10px;
 }
 
 .dropdown-content a:hover {
     background-color: rgba(134, 31, 65, 255);
-    border-radius: 10px;
+    color: white;
 }
 
 .dropdown:hover .dropdown-content {
     display: block;
 }
 
-.login_and_cart {
-    align-items: center;
-    margin-right: 20px;
-}
-
-button.researchOpportunities {
-    border-style: none;
-    background-color: white;
-    align-items: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    color: rgba(134, 31, 65, 255);
-    width: 150px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.login_button {
-    border-style: none;
-    background-color: white;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    color: rgba(134, 31, 65, 255);
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.cart_button {
-    border-style: none;
-    background-color: white;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 40px;
-    cursor: pointer;
-}
-
-.itemcount {
-    position: absolute;
-    margin-top: 10px;
-    margin-left: 5px;
-    border-radius: 5px;
-    width: 18px;
-    height: 15px;
-    font-family: 'Montserrat', sans-serif;
-    background-color: white;
-    font-size: 14px;
-}
-
-
 .middle_section {
+    flex: 1;
     display: flex;
-    gap: 12rem;
 }
 
-#opportunities-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
-    width: 100%;
-    max-width: 2000px;
+/* Left Column: Opportunities List */
+.opportunities_list {
+    width: 30%;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+    max-height: calc(100vh - 8rem); /* Adjust based on header and footer height */
 }
 
-/* Opportunity Box */
-.opportunity-box {
-    border: 3px solid rgba(134, 31, 65, 255);
-    border-radius: 20px;
+.opportunity_item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.opportunity_item:hover {
+    background-color: #f9f9f9;
+}
+
+.opportunity_item.active {
+    background-color: #e6e6e6;
+}
+
+/* Right Column: Opportunity Details */
+.opportunity_details {
+    width: 70%;
     padding: 20px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
-/* Opportunity Title */
-.opportunity-title {
-    font-size: 1.2em;
+#detail-title {
+    font-size: 24px;
     margin-bottom: 10px;
 }
 
-/* Opportunity Description */
-.opportunity-description {
+#detail-description {
+    font-size: 16px;
     margin-bottom: 10px;
 }
 
-/* Call-to-Action Button */
-.cta_button {
-    align-self: flex-start;
-    border: none;
-    border-radius: 20px;
-    background-color: rgb(167, 60, 60);
-    font-family: 'Montserrat', sans-serif;
+#detail-professor,
+#detail-department {
     font-size: 16px;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.cta_button:hover {
-    background-color: rgba(134, 31, 65, 255);
-}
-
-
-
-.background {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 25rem;
-    height: 8rem;
-    margin-left: 3rem;
-    margin-bottom: 1rem;
-    padding: 2.5rem;
-    border: 3px solid rgba(134, 31, 65, 255);
-    border-radius: 20px;
-}
-
-h3.title {
-    margin-top: 0px;
-}
-
-p.professor {
-    margin-top: 0px;
-}
-
-p.department {
-    margin-top: 0px;
-}
-
-p.employment {
-    margin-top: 0px;
-}
-
-.text {
-    font-size: 30px;
-    font-style: italic;
-    margin: 10px;
-}
-
-.cta_button {
-    border-style: 1px solid darkgreen;
-    border-radius: 20px;
-    background-color: rgb(167, 60, 60);
-
-    font-family: 'Montserrat', sans-serif;
-    font-size: 16px;
-    color: white;
-    width: 150px;
-    height: 40px;
-    cursor: pointer;
+    margin-bottom: 5px;
 }
 
 footer {
@@ -272,8 +184,6 @@ footer {
     height: 40px;
     background-color: white;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     border-top: 3px solid rgba(134, 31, 65, 255);
     border-bottom: 5px solid rgba(134, 31, 65, 255);
@@ -281,19 +191,16 @@ footer {
 
 .logo_and_services {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
     align-items: center;
 }
 
 .links {
     font-size: 16px;
-    margin: 5px;
-    font-family: 'Montserrat', sans-serif;
+    margin: 0 5px;
     color: black;
     text-decoration: none;
 }
 
-#details-box {
-    display: none;
+.links:hover {
+    text-decoration: underline;
 }

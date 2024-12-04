@@ -1,21 +1,18 @@
+<!-- researchIndex.html -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="The homepage for VT Research Opportunities Website">
-    <title>VT_Research</title>
+    <title>VT Research Opportunities</title>
 
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
-
     <link rel="stylesheet" href="index_stylesheet.css" />
-
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
 </head>
-
 <body>
     <div class="frame">
+        <!-- Header -->
         <header class="header">
             <div class="logo_and_name">
                 <a href="researchIndex.html">
@@ -41,32 +38,44 @@
             <div class="dropdown">
                 <button class="dropdown_button">
                     <img src="images/dropdown.png" width="10px" height="auto" />
-                    &#9776</button>
+                    &#9776;
+                </button>
                 <div class="dropdown-content">
-                    <a href="goodbooks_category.html">My Settings</a>
-                    <a href="goodbooks_category.html">My Resumes</a>
-                    <a href="goodbooks_category.html">My Applications</a>
+                    <a href="#">My Settings</a>
+                    <a href="#">My Resumes</a>
+                    <a href="#">My Applications</a>
                 </div>
             </div>
         </header>
-        <div class="middle_section">
-            <div id="opportunities-container">
-                <!-- Opportunity boxes will be injected here by JavaScript -->
-            </div>
-        </div>
-    </div>
 
-    <footer class="footer">
-        <div class="logo_and_services">
-            <img src="images/vtlogo.png" width="40px" height="auto" />
-            <div>
-                <a class="links" href="goodbooks_index.html">About</a>
-                <a class="links" href="goodbooks_index.html">Contact</a>
+        <!-- Middle Section -->
+        <div class="middle_section">
+            <!-- Left Column: Opportunities List -->
+            <div class="opportunities_list" id="opportunities-list">
+                <!-- Opportunity items will be injected here by JavaScript -->
+            </div>
+
+            <!-- Right Column: Opportunity Details -->
+            <div class="opportunity_details" id="opportunity-details">
+                <!-- Details of the selected opportunity will be displayed here -->
+                <h2 id="detail-title">Select an Opportunity</h2>
+                <p id="detail-description">Details will appear here when you select an opportunity.</p>
+                <p id="detail-professor"></p>
+                <p id="detail-department"></p>
             </div>
         </div>
-    </footer>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="logo_and_services">
+                <img src="images/vtlogo.png" width="40px" height="auto" />
+                <div>
+                    <a class="links" href="#">About</a>
+                    <a class="links" href="#">Contact</a>
+                </div>
+            </div>
+        </footer>
     </div>
     <script src="app.js"></script>
 </body>
-
 </html>

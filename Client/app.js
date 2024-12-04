@@ -1,49 +1,77 @@
-// Select the container using getElementById
-const container = document.getElementById('opportunities-container');
+// app.js
 
-// Fetch opportunities from the backend
-fetch('/api/opportunities')
-  .then(response => response.json())
-  .then(data => {
-    // Clear any existing content
-    container.innerHTML = '';
+document.addEventListener('DOMContentLoaded', function() {
+  // Fetch opportunities from the backend
+  fetch('/api/opportunities')
+    .then(response => response.json())
+    .then(data => {
+      displayOpportunityList(data);
 
-    // Loop through each opportunity
-    data.forEach(opportunity => {
-      // Create the outer div with class 'opportunity-box'
-      const opportunityDiv = document.createElement('div');
-      opportunityDiv.className = 'opportunity-box';
+      // Optionally, display the first opportunity's details by default
+      if (data.length > 0) {
+        displayOpportunityDetails(data[0]);
 
-      // Create the title
+        // Set the first item as active
+        const firstItem = document.querySelector('.opportunity_item');
+        if (firstItem) {
+          firstItem.classList.add('active');
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching opportunities:', error);
+    });
+
+  // Function to display the list of opportunities
+  function displayOpportunityList(opportunities) {
+    const listContainer = document.getElementById('opportunities-list');
+    listContainer.innerHTML = ''; // Clear existing content
+
+    opportunities.forEach(opportunity => {
+      // Create the item div with class 'opportunity_item'
+      const item = document.createElement('div');
+      item.className = 'opportunity_item';
+
+      // Create the title element
       const title = document.createElement('h3');
-      title.className = 'opportunity-title';
+      title.className = 'opportunity_item_title';
       title.textContent = opportunity.title;
 
-      // Append the title to the opportunityDiv
-      opportunityDiv.appendChild(title);
+      // Optionally, add the professor name
+      const professor = document.createElement('p');
+      professor.className = 'opportunity_item_professor';
+      professor.textContent = opportunity.professor ? `Professor: ${opportunity.professor}` : '';
 
-      // Create the description if available
-      if (opportunity.description && opportunity.description !== 'N/A') {
-        const description = document.createElement('p');
-        description.className = 'opportunity-description';
-        description.textContent = opportunity.description;
-        opportunityDiv.appendChild(description);
-      }
+      // Append title and professor to the item
+      item.appendChild(title);
+      item.appendChild(professor);
 
-      // Create the link
-      const link = document.createElement('a');
-      link.className = 'cta_button';
-      link.textContent = 'View More on VT Website';
-      link.href = opportunity.link;
-      link.target = '_blank'; // Open in a new tab
+      // Add click event listener
+      item.addEventListener('click', () => {
+        // Remove active class from other items
+        const items = document.querySelectorAll('.opportunity_item');
+        items.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
 
-      // Append the link to the opportunityDiv
-      opportunityDiv.appendChild(link);
+        // Display opportunity details
+        displayOpportunityDetails(opportunity);
+      });
 
-      // Append opportunityDiv to the container
-      container.appendChild(opportunityDiv);
+      // Append item to the list container
+      listContainer.appendChild(item);
     });
-  })
-  .catch(error => {
-    console.error('Error fetching opportunities:', error);
-  });
+  }
+
+  // Function to display opportunity details
+  function displayOpportunityDetails(opportunity) {
+    const detailTitle = document.getElementById('detail-title');
+    const detailDescription = document.getElementById('detail-description');
+    const detailProfessor = document.getElementById('detail-professor');
+    const detailDepartment = document.getElementById('detail-department');
+
+    detailTitle.textContent = opportunity.title;
+    detailDescription.textContent = opportunity.fullDescription || opportunity.description || 'No description available.';
+    detailProfessor.textContent = opportunity.professor ? `Professor: ${opportunity.professor}` : '';
+    detailDepartment.textContent = opportunity.department ? `Department: ${opportunity.department}` : '';
+  }
+});
