@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from PyPDF2 import PdfReader
 import re
 import pickle
@@ -183,6 +183,37 @@ def extract_education_from_resume(text):
             education.append(match.group())
 
     return education
+
+@app.route('/process-resume', methods=['POST'])
+def process_resume():
+    try:
+        # Get the file path from the request
+        data = request.json
+        file_path = data.get('filePath')
+
+        if not file_path:
+            return jsonify({'error': 'File path not provided'}), 400
+
+        # Extract text from the resume
+        resume_text = pdf_to_text(file_path) if file_path.endswith('.pdf') else None
+        if not resume_text:
+            return jsonify({'error': 'Unsupported file format or empty file'}), 400
+
+        # Generate predictions
+        category = predict_category(resume_text)
+        recommended_job = job_recommendation(resume_text)
+        skills = extract_skills_from_resume(resume_text)
+        education = extract_education_from_resume(resume_text)
+
+        return jsonify({
+            'category': category,
+            'recommended_job': recommended_job,
+            'skills': skills,
+            'education': education
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 

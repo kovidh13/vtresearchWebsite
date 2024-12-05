@@ -200,16 +200,34 @@ app.post('/api/upload-cv', authenticate, function (req, res, next) {
   }
 
   try {
-    // Add the new CV to the user's 'cvs' array
-    await User.findByIdAndUpdate(req.user.userId, {
-      $push: { cvs: { filename: req.file.filename, uploadedAt: new Date() } },
+    // Step 1: Process the uploaded resume
+    const filePath = path.join(__dirname, 'uploads/cvs', req.file.filename);
+    const pythonApiResponse = await axios.post('http://127.0.0.1:5000/process-resume', {
+      filePath: filePath,
     });
-    res.status(200).json({ message: 'CV uploaded successfully' });
+
+    const { skills, recommended_job } = pythonApiResponse.data;
+
+    // Step 2: Query MongoDB for matching opportunities
+    const opportunities = await ResearchOpportunity.find({
+      $or: [
+        { title: { $regex: recommended_job, $options: 'i' } },
+        { description: { $regex: recommended_job, $options: 'i' } },
+        { description: { $regex: skills.join('|'), $options: 'i' } },
+      ],
+    });
+
+    // Step 3: Send response
+    res.status(200).json({
+      message: 'CV processed successfully',
+      opportunities: opportunities.length > 0 ? opportunities : null,
+    });
   } catch (err) {
-    console.error('Error uploading CV:', err);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error processing CV:', err.message);
+    res.status(500).json({ message: 'Error processing CV', error: err.message });
   }
 });
+
 
 app.post('/api/opportunities/:id/apply', authenticate, async (req, res) => {
   if (req.user.role !== 'student') {
