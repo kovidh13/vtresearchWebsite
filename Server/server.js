@@ -14,7 +14,7 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(bodyParser.json()); // Parse JSON bodies
-app.use(express.static(path.join(__dirname, '../Client'))); // Serve static files from Client 
+// app.use(express.static(path.join(__dirname, '../Client'))); // Serve static files from Client 
 
 // MongoDB Connection String with Database Name
 const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@vtresearch.oow2p.mongodb.net/vtresearchdatabase?retryWrites=true&w=majority&appName=vtresearch';
@@ -41,7 +41,7 @@ const authenticate = (req, res, next) => {
 // Set up storage engine
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/cvs/'); 
+    cb(null, 'uploads/cvs/');
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -102,7 +102,21 @@ const researchOpportunitySchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
-const ResearchOpportunity = mongoose.model('ResearchOpportunity', researchOpportunitySchema, 'researchopportunities'); // Specify collection name
+const ResearchOpportunity = mongoose.model('ResearchOpportunity', researchOpportunitySchema, 'researchopportunities');
+
+// Place the Application Schema and Model here
+const applicationSchema = new mongoose.Schema({
+  opportunity: { type: mongoose.Schema.Types.ObjectId, ref: 'ResearchOpportunity', required: true },
+  student: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  cv: {
+    filename: { type: String, required: true },
+    uploadedAt: { type: Date, required: true },
+  },
+  status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
+  appliedAt: { type: Date, default: Date.now },
+});
+
+const Application = mongoose.model('Application', applicationSchema);
 
 // Routes
 
@@ -208,6 +222,56 @@ app.post('/api/upload-cv', authenticate, function (req, res, next) {
   }
 });
 
+app.post('/api/opportunities/:id/apply', authenticate, async (req, res) => {
+  if (req.user.role !== 'student') {
+    return res.status(403).json({ message: 'Forbidden: Only students can apply to opportunities' });
+  }
+
+  const opportunityId = req.params.id;
+  const studentId = req.user.userId;
+
+  try {
+    // Check if the opportunity exists
+    const opportunity = await ResearchOpportunity.findById(opportunityId);
+    if (!opportunity) {
+      return res.status(404).json({ message: 'Opportunity not found' });
+    }
+
+    // Check if the student has already applied
+    const existingApplication = await Application.findOne({ opportunity: opportunityId, student: studentId });
+    if (existingApplication) {
+      return res.status(400).json({ message: 'You have already applied to this opportunity' });
+    }
+
+    // Fetch the student's resumes
+    const student = await User.findById(studentId);
+    if (!student.cvs || student.cvs.length === 0) {
+      return res.status(400).json({ message: 'Please upload a CV before applying.' });
+    }
+
+    // Use the most recently uploaded resume
+    const latestResume = student.cvs.sort((a, b) => b.uploadedAt - a.uploadedAt)[0];
+
+    // Create a new application with the resume
+    const newApplication = new Application({
+      opportunity: opportunityId,
+      student: studentId,
+      cv: {
+        filename: latestResume.filename,
+        uploadedAt: latestResume.uploadedAt,
+      },
+    });
+
+    await newApplication.save();
+
+    res.status(201).json({ message: 'Application submitted successfully' });
+  } catch (err) {
+    console.error('Error submitting application:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
 // User Registration with Password Hashing
 app.post('/api/register', async (req, res) => {
   const { username, email, password, role } = req.body;
@@ -272,6 +336,8 @@ app.post('/api/opportunities', authenticate, async (req, res) => {
     res.status(400).json({ message: 'Invalid data' });
   }
 });
+
+app.use(express.static(path.join(__dirname, '../Client')));
 
 // 404 Handler
 app.use((req, res) => {
