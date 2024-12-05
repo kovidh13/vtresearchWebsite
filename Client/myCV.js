@@ -50,67 +50,86 @@ document.addEventListener('DOMContentLoaded', function() {
   
     form.addEventListener('submit', function(event) {
       event.preventDefault();
-    
+  
       const fileInput = document.getElementById('cv-file');
       const file = fileInput.files[0];
-    
+  
       if (!file) {
-        messageDiv.innerHTML = '<p class="error">Please select a file to upload.</p>';
-        return;
+          messageDiv.innerHTML = '<p class="error">Please select a file to upload.</p>';
+          return;
       }
-    
+  
       const formData = new FormData();
       formData.append('cv', file);
-    
+  
       fetch('/api/upload-cv', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: formData,
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.opportunities) {
-          messageDiv.innerHTML = '<p class="success">CV uploaded successfully, and recommendations updated!</p>';
-          updateOpportunities(data.opportunities); // Update the opportunities dynamically
-        } else {
-          messageDiv.innerHTML = '<p class="success">CV uploaded successfully. No recommendations found.</p>';
-        }
-        loadCVs(); // Refresh the CV list
-      })
-      .catch(error => {
-        console.error('Error uploading CV:', error);
-        messageDiv.innerHTML = '<p class="error">An error occurred. Please try again later.</p>';
-      });
-    });
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Matched Opportunities:', data.opportunities); // Debugging
     
+            if (data.opportunities) {
+                // Store full opportunity details in localStorage
+                localStorage.setItem('recommendedOpportunities', JSON.stringify(data.opportunities));
+    
+                messageDiv.innerHTML = '<p class="success">CV uploaded successfully. Navigate to recommended opportunities.</p>';
+            } else {
+                messageDiv.innerHTML = '<p class="success">CV uploaded successfully. No recommendations found.</p>';
+            }
+            loadCVs(); // Refresh CV list
+        })
+        .catch(error => {
+            console.error('Error uploading CV:', error);
+            if (error.response) {
+                messageDiv.innerHTML = `<p class="error">${error.response.data.message || 'An error occurred.'}</p>`;
+            } else {
+                messageDiv.innerHTML = '<p class="error">Unable to connect to the server. Please try again later.</p>';
+            }
+        });
+    
+  });
+  
+  
   });
 
   function updateOpportunities(opportunities) {
     const opportunityListDiv = document.getElementById('opportunities-list');
-    opportunityListDiv.innerHTML = ''; // Clear existing opportunities
-  
-    if (opportunities.length === 0) {
-      opportunityListDiv.innerHTML = '<p>No matching opportunities found.</p>';
-      return;
+
+    // Debugging: Ensure the element exists
+    if (!opportunityListDiv) {
+        console.error('Element with ID "opportunities-list" not found.');
+        return;
     }
-  
+
+    console.log('Updating opportunities with:', opportunities); // Log the data
+
+    opportunityListDiv.innerHTML = ''; // Clear existing opportunities
+
+    if (opportunities.length === 0) {
+        opportunityListDiv.innerHTML = '<p>No matching opportunities found.</p>';
+        return;
+    }
+
     opportunities.forEach(opportunity => {
-      const oppElement = document.createElement('div');
-      oppElement.className = 'opportunity-item';
-  
-      const title = document.createElement('h3');
-      title.textContent = opportunity.title;
-  
-      const description = document.createElement('p');
-      description.textContent = opportunity.description;
-  
-      oppElement.appendChild(title);
-      oppElement.appendChild(description);
-  
-      opportunityListDiv.appendChild(oppElement);
+        const oppElement = document.createElement('div');
+        oppElement.className = 'opportunity-item';
+
+        const title = document.createElement('h3');
+        title.textContent = opportunity.title;
+
+        const description = document.createElement('p');
+        description.textContent = opportunity.description;
+
+        oppElement.appendChild(title);
+        oppElement.appendChild(description);
+
+        opportunityListDiv.appendChild(oppElement);
     });
-  }
+}
   
   

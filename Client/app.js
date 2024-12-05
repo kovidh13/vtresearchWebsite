@@ -38,33 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
       displayError('Failed to load research opportunities. Please try again later.');
     });
 
-    function uploadResume() {
-      const fileInput = document.getElementById('resumeUpload');
-      const file = fileInput.files[0];
     
-      const formData = new FormData();
-      formData.append('cv', file);
-    
-      fetch('/api/upload-cv', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.opportunities) {
-            displayOpportunityList(data.opportunities); // Update with recommendations
-          } else {
-            alert('No matching recommendations. Current opportunities remain.');
-          }
-        })
-        .catch(error => {
-          console.error('Error uploading resume:', error);
-          alert('Failed to process resume. Please try again.');
-        });
-    }
     
   // Function to display the list of opportunities
   function displayOpportunityList(opportunities) {
@@ -245,4 +219,10 @@ document.addEventListener('DOMContentLoaded', function () {
       return null;
     }
   }
+
+  function navigateToRecommended() {
+    window.location.href = 'recommendedOpportunities.html';
+}
+
+
 });

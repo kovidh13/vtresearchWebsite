@@ -184,48 +184,55 @@ app.get('/download-cv/:filename', authenticate, async (req, res) => {
 });
 
 // Protected route for students to upload their CV
-app.post('/api/upload-cv', authenticate, function (req, res, next) {
-  upload.single('cv')(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      return res.status(400).json({ message: err.message });
-    } else if (err) {
-      return res.status(400).json({ message: err.message });
-    }
-    next();
-  });
-}, async (req, res) => {
-  if (req.user.role !== 'student') {
-    return res.status(403).json({ message: 'Forbidden: Only students can upload CVs' });
-  }
-
+app.post('/api/upload-cv', authenticate, upload.single('cv'), async (req, res) => {
   try {
-    // Step 1: Process the uploaded resume
-    const filePath = path.join(__dirname, 'uploads/cvs', req.file.filename);
-    const pythonApiResponse = await axios.post('http://127.0.0.1:5000/process-resume', {
-      filePath: filePath,
-    });
+      console.log('Received request to upload CV');
 
-    const { skills, recommended_job } = pythonApiResponse.data;
+      // Check if a file was uploaded
+      if (!req.file) {
+          console.error('No file uploaded');
+          return res.status(400).json({ message: 'No file uploaded' });
+      }
 
-    // Step 2: Query MongoDB for matching opportunities
-    const opportunities = await ResearchOpportunity.find({
-      $or: [
-        { title: { $regex: recommended_job, $options: 'i' } },
-        { description: { $regex: recommended_job, $options: 'i' } },
-        { description: { $regex: skills.join('|'), $options: 'i' } },
-      ],
-    });
+      const filePath = path.join(__dirname, 'uploads/cvs', req.file.filename);
+      console.log('File path for processing:', filePath);
 
-    // Step 3: Send response
-    res.status(200).json({
-      message: 'CV processed successfully',
-      opportunities: opportunities.length > 0 ? opportunities : null,
-    });
+      // Send the file to the Python API
+      const pythonApiResponse = await axios.post('http://127.0.0.1:5000/process-resume', {
+          filePath: filePath,
+      });
+
+      console.log('Response from Python API:', pythonApiResponse.data);
+
+      const { skills, recommended_job } = pythonApiResponse.data;
+
+      // Debugging the extracted data
+      console.log('Extracted skills:', skills);
+      console.log('Extracted recommended job:', recommended_job);
+
+      // Fetch matching opportunities
+      const opportunities = await ResearchOpportunity.find({
+          $or: [
+              { title: { $regex: recommended_job, $options: 'i' } },
+              { description: { $regex: recommended_job, $options: 'i' } },
+              { description: { $regex: skills.join('|'), $options: 'i' } },
+          ],
+      }).populate('postedBy', 'username');
+
+      console.log('Matched opportunities:', opportunities);
+
+      // Send the response
+      res.status(200).json({
+          message: 'CV processed successfully',
+          opportunities,
+      });
   } catch (err) {
-    console.error('Error processing CV:', err.message);
-    res.status(500).json({ message: 'Error processing CV', error: err.message });
+      // Log the error for debugging
+      console.error('Error processing CV:', err);
+      res.status(500).json({ message: 'An error occurred', error: err.message });
   }
 });
+
 
 
 app.post('/api/opportunities/:id/apply', authenticate, async (req, res) => {
@@ -342,6 +349,19 @@ app.post('/api/opportunities', authenticate, async (req, res) => {
     res.status(400).json({ message: 'Invalid data' });
   }
 });
+
+app.get('/api/recommended-opportunities', authenticate, (req, res) => {
+  try {
+      // Check if there are stored recommended opportunities
+      const opportunities = req.user.recommendedOpportunities || [];
+      res.status(200).json({ opportunities });
+  } catch (err) {
+      console.error('Error fetching recommended opportunities:', err);
+      res.status(500).json({ message: 'Failed to fetch recommended opportunities' });
+  }
+});
+
+
 
 app.use(express.static(path.join(__dirname, '../Client')));
 
