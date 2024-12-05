@@ -186,14 +186,25 @@ app.post('/api/upload-cv', authenticate, function (req, res, next) {
   }
 
   try {
-    // Add the new CV to the user's 'cvs' array
-    await User.findByIdAndUpdate(req.user.userId, {
-      $push: { cvs: { filename: req.file.filename, uploadedAt: new Date() } },
+    // Get the uploaded file path
+    const filePath = path.join(__dirname, 'uploads/cvs', req.file.filename);
+
+    // Send the resume to the Python Flask API for processing
+    const pythonApiResponse = await axios.post('http://127.0.0.1:5000/process-resume', {
+      filePath: filePath,
     });
-    res.status(200).json({ message: 'CV uploaded successfully' });
+
+    // Extract the predictions from the Python API response
+    const predictions = pythonApiResponse.data;
+
+    // Send the predictions back to the client or use them for filtering
+    res.status(200).json({
+      message: 'CV processed successfully',
+      predictions: predictions,
+    });
   } catch (err) {
-    console.error('Error uploading CV:', err);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error processing CV:', err.message);
+    res.status(500).json({ message: 'Error processing CV', error: err.message });
   }
 });
 
