@@ -38,48 +38,61 @@ document.addEventListener('DOMContentLoaded', function () {
       displayError('Failed to load research opportunities. Please try again later.');
     });
 
+    function uploadResume() {
+      const fileInput = document.getElementById('resumeUpload');
+      const file = fileInput.files[0];
+    
+      const formData = new FormData();
+      formData.append('cv', file);
+    
+      fetch('/api/upload-cv', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.opportunities) {
+            displayOpportunityList(data.opportunities); // Update with recommendations
+          } else {
+            alert('No matching recommendations. Current opportunities remain.');
+          }
+        })
+        .catch(error => {
+          console.error('Error uploading resume:', error);
+          alert('Failed to process resume. Please try again.');
+        });
+    }
+    
   // Function to display the list of opportunities
   function displayOpportunityList(opportunities) {
-    const listContainer = document.getElementById('opportunities-list');
-    listContainer.innerHTML = ''; // Clear existing content
-
+    const opportunityListDiv = document.getElementById('opportunities-list');
+    opportunityListDiv.innerHTML = ''; // Clear existing opportunities
+  
+    if (opportunities.length === 0) {
+      opportunityListDiv.innerHTML = '<p>No matching opportunities found.</p>';
+      return;
+    }
+  
     opportunities.forEach(opportunity => {
-      // Create the item div with class 'opportunity_item'
-      const item = document.createElement('div');
-      item.className = 'opportunity_item';
-
-      // Create the title element
+      const oppElement = document.createElement('div');
+      oppElement.className = 'opportunity-item';
+  
       const title = document.createElement('h3');
-      title.className = 'opportunity_item_title';
       title.textContent = opportunity.title;
-
-      // Add the professor name using 'postedBy.username'
-      const professor = document.createElement('p');
-      professor.className = 'opportunity_item_professor';
-      professor.textContent = opportunity.postedBy && opportunity.postedBy.username
-        ? `Professor: ${opportunity.postedBy.username}`
-        : 'Professor: N/A';
-
-      // Append title and professor to the item
-      item.appendChild(title);
-      item.appendChild(professor);
-
-      // Add click event listener
-      item.addEventListener('click', () => {
-        // Remove active class from other items
-        const items = document.querySelectorAll('.opportunity_item');
-        items.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-
-        // Display opportunity details
-        displayOpportunityDetails(opportunity);
-      });
-
-      // Append item to the list container
-      listContainer.appendChild(item);
+  
+      const description = document.createElement('p');
+      description.textContent = opportunity.description;
+  
+      oppElement.appendChild(title);
+      oppElement.appendChild(description);
+  
+      opportunityListDiv.appendChild(oppElement);
     });
   }
-
+  
   // Function to display opportunity details
   function displayOpportunityDetails(opportunity) {
     const detailTitle = document.getElementById('detail-title');
