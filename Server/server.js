@@ -8,6 +8,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
+
 
 const app = express();
 const PORT = 3000;
@@ -70,10 +72,7 @@ const upload = multer({
 
 
 // Connect to MongoDB Atlas
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB Atlas'))
   .catch((err) => console.error('MongoDB connection error:', err));
 

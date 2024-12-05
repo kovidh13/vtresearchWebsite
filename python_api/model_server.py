@@ -13,13 +13,18 @@ tfidf_vectorizer_job_recommendation = pickle.load(open('models/tfidf_vectorizer_
 
 # Clean resume==========================================================================================================
 def cleanResume(txt):
-    cleanText = re.sub('http\S+\s', ' ', txt)
-    cleanText = re.sub('RT|cc', ' ', cleanText)
-    cleanText = re.sub('#\S+\s', ' ', cleanText)
-    cleanText = re.sub('@\S+', '  ', cleanText)
-    cleanText = re.sub('[%s]' % re.escape("""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""), ' ', cleanText)
-    cleanText = re.sub(r'[^\x00-\x7f]', ' ', cleanText)
-    cleanText = re.sub('\s+', ' ', cleanText)
+    """
+    Cleans text extracted from resumes by removing URLs, hashtags, mentions,
+    special characters, non-ASCII characters, and extra whitespace.
+    """
+    cleanText = re.sub(r'http\S+', ' ', txt)  # Remove URLs
+    cleanText = re.sub(r'\bRT\b|\bcc\b', ' ', cleanText, flags=re.IGNORECASE)  # Remove retweets and 'cc'
+    cleanText = re.sub(r'#\S+', ' ', cleanText)  # Remove hashtags
+    cleanText = re.sub(r'@\S+', ' ', cleanText)  # Remove mentions
+    cleanText = re.sub(r'[!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~]', ' ', cleanText)  # Remove special characters
+    cleanText = re.sub(r'[^\x00-\x7F]+', ' ', cleanText)  # Remove non-ASCII characters
+    cleanText = re.sub(r'\s+', ' ', cleanText)  # Replace multiple spaces with a single space
+    cleanText = cleanText.strip()  # Remove leading and trailing whitespace
     return cleanText
 
 # Prediction and Category Name
@@ -205,6 +210,10 @@ def process_resume():
         skills = extract_skills_from_resume(resume_text)
         education = extract_education_from_resume(resume_text)
 
+        print("job", recommended_job)
+        print("skills", skills)
+
+
         return jsonify({
             'category': category,
             'recommended_job': recommended_job,
@@ -213,6 +222,10 @@ def process_resume():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+if __name__ == '__main__':
+    app.run(debug=False, port=5000)
+
 
 
 
