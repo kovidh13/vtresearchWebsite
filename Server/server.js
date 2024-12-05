@@ -8,37 +8,38 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const fs = require('fs').promises; // Import fs with promises API
 
 const app = express();
 const PORT = 3000;
 
+// Middleware Setup
 app.use(cors());
 app.use(bodyParser.json()); // Parse JSON bodies
-// app.use(express.static(path.join(__dirname, '../Client'))); // Serve static files from Client 
 
-// MongoDB Connection String with Database Name
-const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@vtresearch.oow2p.mongodb.net/vtresearchdatabase?retryWrites=true&w=majority&appName=vtresearch';
-
-// JWT Secret Key
+// JWT Secret Key (Use environment variables in production)
 const JWT_SECRET = 'secret_key';
 
+// Authentication Middleware
 const authenticate = (req, res, next) => {
-  // ... your existing authentication code ...
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.log('No authorization header or Bearer prefix.');
     return res.status(401).json({ message: 'Unauthorized: No token provided' });
   }
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
+    console.log('Authenticated User:', req.user.username, 'Role:', req.user.role);
     next();
   } catch (err) {
     console.error('Invalid token:', err);
     res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 };
-// Set up storage engine
+
+// Set up storage engine for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/cvs/');
@@ -50,7 +51,7 @@ const storage = multer.diskStorage({
   }
 });
 
-// Initialize upload
+// Initialize upload with multer
 const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // Limit files to 5MB
@@ -68,8 +69,9 @@ const upload = multer({
   }
 });
 
-
 // Connect to MongoDB Atlas
+const MONGODB_URI = 'mongodb+srv://ivan1424:aisr1400@vtresearch.oow2p.mongodb.net/vtresearchdatabase?retryWrites=true&w=majority&appName=vtresearch';
+
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -78,6 +80,8 @@ mongoose.connect(MONGODB_URI, {
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Define Schemas and Models
+
+// User Schema
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true }, // Ensure email field exists
@@ -85,26 +89,30 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['student', 'professor'], required: true },
   cvs: [
     {
+      _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, // Ensure _id exists
       filename: String,
+      originalName: String, // Add originalName for display
       uploadedAt: { type: Date, default: Date.now },
     },
   ],
 });
 
 
+const User = mongoose.model('User', userSchema);
+
+// Research Opportunity Schema
 const researchOpportunitySchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   fullDescription: { type: String },
   department: { type: String, required: true },
-  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-const User = mongoose.model('User', userSchema);
 const ResearchOpportunity = mongoose.model('ResearchOpportunity', researchOpportunitySchema, 'researchopportunities');
 
-// Place the Application Schema and Model here
+// Application Schema
 const applicationSchema = new mongoose.Schema({
   opportunity: { type: mongoose.Schema.Types.ObjectId, ref: 'ResearchOpportunity', required: true },
   student: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -127,158 +135,6 @@ app.get('/', (req, res) => {
 
 // API Routes
 
-// Get all research opportunities with populated 'postedBy' field
-app.get('/api/opportunities', async (req, res) => {
-  try {
-    const opportunities = await ResearchOpportunity.find().populate('postedBy', 'username');
-    res.json(opportunities);
-  } catch (err) {
-    console.error('Error fetching opportunities:', err);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
-
-// Get a single research opportunity by ID with populated 'postedBy' field
-app.get('/api/opportunities/:id', async (req, res) => {
-  try {
-    const opportunity = await ResearchOpportunity.findById(req.params.id).populate('postedBy', 'username');
-    if (!opportunity) return res.status(404).json({ message: 'Opportunity not found' });
-    res.json(opportunity);
-  } catch (err) {
-    console.error('Error fetching opportunity:', err);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
-// returns the list of CVs uploaded by the user
-app.get('/api/my-cvs', authenticate, async (req, res) => {
-  if (req.user.role !== 'student') {
-    return res.status(403).json({ message: 'Forbidden: Only students can access this' });
-  }
-
-  try {
-    const user = await User.findById(req.user.userId);
-    res.json(user.cvs);
-  } catch (err) {
-    console.error('Error fetching CVs:', err);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
-
-app.get('/download-cv/:filename', authenticate, async (req, res) => {
-  const filename = req.params.filename;
-
-  try {
-    // Verify that the user owns the CV
-    const user = await User.findById(req.user.userId);
-    const cv = user.cvs.find(cv => cv.filename === filename);
-
-    if (!cv) {
-      return res.status(403).json({ message: 'Forbidden: You do not have access to this CV' });
-    }
-
-    const filePath = path.join(__dirname, 'uploads/cvs', filename);
-    res.sendFile(filePath);
-  } catch (err) {
-    console.error('Error downloading CV:', err);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
-
-// Protected route for students to upload their CV
-app.post('/api/upload-cv', authenticate, function (req, res, next) {
-  upload.single('cv')(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      return res.status(400).json({ message: err.message });
-    } else if (err) {
-      return res.status(400).json({ message: err.message });
-    }
-    next();
-  });
-}, async (req, res) => {
-  if (req.user.role !== 'student') {
-    return res.status(403).json({ message: 'Forbidden: Only students can upload CVs' });
-  }
-
-  try {
-    // Step 1: Process the uploaded resume
-    const filePath = path.join(__dirname, 'uploads/cvs', req.file.filename);
-    const pythonApiResponse = await axios.post('http://127.0.0.1:5000/process-resume', {
-      filePath: filePath,
-    });
-
-    const { skills, recommended_job } = pythonApiResponse.data;
-
-    // Step 2: Query MongoDB for matching opportunities
-    const opportunities = await ResearchOpportunity.find({
-      $or: [
-        { title: { $regex: recommended_job, $options: 'i' } },
-        { description: { $regex: recommended_job, $options: 'i' } },
-        { description: { $regex: skills.join('|'), $options: 'i' } },
-      ],
-    });
-
-    // Step 3: Send response
-    res.status(200).json({
-      message: 'CV processed successfully',
-      opportunities: opportunities.length > 0 ? opportunities : null,
-    });
-  } catch (err) {
-    console.error('Error processing CV:', err.message);
-    res.status(500).json({ message: 'Error processing CV', error: err.message });
-  }
-});
-
-
-app.post('/api/opportunities/:id/apply', authenticate, async (req, res) => {
-  if (req.user.role !== 'student') {
-    return res.status(403).json({ message: 'Forbidden: Only students can apply to opportunities' });
-  }
-
-  const opportunityId = req.params.id;
-  const studentId = req.user.userId;
-
-  try {
-    // Check if the opportunity exists
-    const opportunity = await ResearchOpportunity.findById(opportunityId);
-    if (!opportunity) {
-      return res.status(404).json({ message: 'Opportunity not found' });
-    }
-
-    // Check if the student has already applied
-    const existingApplication = await Application.findOne({ opportunity: opportunityId, student: studentId });
-    if (existingApplication) {
-      return res.status(400).json({ message: 'You have already applied to this opportunity' });
-    }
-
-    // Fetch the student's resumes
-    const student = await User.findById(studentId);
-    if (!student.cvs || student.cvs.length === 0) {
-      return res.status(400).json({ message: 'Please upload a CV before applying.' });
-    }
-
-    // Use the most recently uploaded resume
-    const latestResume = student.cvs.sort((a, b) => b.uploadedAt - a.uploadedAt)[0];
-
-    // Create a new application with the resume
-    const newApplication = new Application({
-      opportunity: opportunityId,
-      student: studentId,
-      cv: {
-        filename: latestResume.filename,
-        uploadedAt: latestResume.uploadedAt,
-      },
-    });
-
-    await newApplication.save();
-
-    res.status(201).json({ message: 'Application submitted successfully' });
-  } catch (err) {
-    console.error('Error submitting application:', err);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
-
-
 // User Registration with Password Hashing
 app.post('/api/register', async (req, res) => {
   const { username, email, password, role } = req.body;
@@ -296,8 +152,6 @@ app.post('/api/register', async (req, res) => {
     res.status(400).json({ message: 'Invalid data' });
   }
 });
-
-
 
 // User Login with Password Verification
 app.post('/api/login', async (req, res) => {
@@ -322,29 +176,227 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Protected route to create a new research opportunity (Professors only)
-app.post('/api/opportunities', authenticate, async (req, res) => {
-  if (req.user.role !== 'professor') {
-    return res.status(403).json({ message: 'Forbidden: Only professors can post opportunities' });
-  }
-  const { title, description, fullDescription, department } = req.body;
+// Get all research opportunities with populated 'postedBy' field
+app.get('/api/opportunities', async (req, res) => {
   try {
+    const opportunities = await ResearchOpportunity.find().populate('postedBy', 'username email');
+    res.json(opportunities);
+  } catch (err) {
+    console.error('Error fetching opportunities:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// Get a single research opportunity by ID with populated 'postedBy' field
+app.get('/api/opportunities/:id', async (req, res) => {
+  try {
+    const opportunity = await ResearchOpportunity.findById(req.params.id).populate('postedBy', 'username email');
+    if (!opportunity) return res.status(404).json({ message: 'Opportunity not found' });
+    res.json(opportunity);
+  } catch (err) {
+    console.error('Error fetching opportunity:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// Protected route for professors to fetch applications
+app.get('/api/professor/applications', authenticate, async (req, res) => {
+  if (req.user.role !== 'professor') {
+    return res.status(403).json({ message: 'Forbidden: Only professors can access this' });
+  }
+
+  try {
+    // Find all research opportunities posted by the professor
+    const opportunities = await ResearchOpportunity.find({ postedBy: req.user.userId });
+
+    const opportunityIds = opportunities.map(op => op._id);
+
+    // Find all applications related to these opportunities
+    const applications = await Application.find({ opportunity: { $in: opportunityIds } })
+      .populate('student', 'username email')
+      .populate('opportunity', 'title department');
+
+    res.json(applications);
+  } catch (err) {
+    console.error('Error fetching applications:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// Fetch CVs uploaded by the authenticated student
+app.get('/api/my-cvs', authenticate, async (req, res) => {
+  if (req.user.role !== 'student') {
+    return res.status(403).json({ message: 'Forbidden: Only students can access this' });
+  }
+
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user.cvs);
+  } catch (err) {
+    console.error('Error fetching CVs:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
+// Download CV
+app.get('/download-cv/:filename', authenticate, async (req, res) => {
+  const filename = req.params.filename;
+  console.log(`User ${req.user.userId} is attempting to download CV: ${filename}`);
+
+  try {
+    // Verify that the user owns the CV
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      console.error(`User with ID ${req.user.userId} not found`);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const cv = user.cvs.find(cv => cv.filename === filename);
+    if (!cv) {
+      console.error(`CV with filename ${filename} not found for user ${req.user.userId}`);
+      return res.status(403).json({ message: 'Forbidden: You do not have access to this CV' });
+    }
+
+    const filePath = path.resolve(__dirname, 'uploads', 'cvs', filename);
+    console.log(`Attempting to send file at path: ${filePath}`);
+
+    // Check if the file exists before sending
+    try {
+      await fs.access(filePath);
+      console.log(`File exists: ${filePath}`);
+      res.sendFile(filePath);
+    } catch (fileErr) {
+      console.error(`File does not exist: ${filePath}`, fileErr);
+      return res.status(404).json({ message: 'CV file not found on server' });
+    }
+  } catch (err) {
+    console.error('Error downloading CV:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
+// Protected route for students to upload their CV
+app.post('/api/upload-cv', authenticate, function (req, res, next) {
+  if (req.user.role !== 'student') {
+    return res.status(403).json({ message: 'Forbidden: Only students can upload CVs' });
+  }
+  upload.single('cv')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ message: err.message });
+    } else if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
+  try {
+    // Add the new CV to the user's 'cvs' array
+    await User.findByIdAndUpdate(req.user.userId, {
+      $push: { cvs: { filename: req.file.filename, uploadedAt: new Date() } },
+    });
+    res.status(200).json({ message: 'CV uploaded successfully' });
+  } catch (err) {
+    console.error('Error uploading CV:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// POST Route to Create a New Research Opportunity
+app.post('/api/opportunities', authenticate, async (req, res) => {
+  // Ensure the user is a professor
+  if (req.user.role !== 'professor') {
+    return res.status(403).json({ message: 'Access denied. Only professors can post opportunities.' });
+  }
+
+  const { title, description, fullDescription, department } = req.body;
+
+  // Basic validation
+  if (!title || !description || !department) {
+    return res.status(400).json({ message: 'Title, description, and department are required.' });
+  }
+
+  try {
+    // Create a new ResearchOpportunity document
     const newOpportunity = new ResearchOpportunity({
       title,
       description,
       fullDescription,
       department,
-      postedBy: req.user.userId, // Correctly assign to 'postedBy'
+      postedBy: req.user.userId, // Associate with the professor's user ID
+      createdAt: new Date(),
     });
-    const savedOpportunity = await newOpportunity.save();
-    res.status(201).json(savedOpportunity);
+
+    await newOpportunity.save();
+
+    res.status(201).json({ message: 'Research opportunity posted successfully.', opportunity: newOpportunity });
   } catch (err) {
-    console.error('Error creating opportunity:', err);
-    res.status(400).json({ message: 'Invalid data' });
+    console.error('Error posting research opportunity:', err);
+    res.status(500).json({ message: 'Server Error: Could not post research opportunity.' });
+  }
+});
+
+
+
+// Protected route to delete a CV by CV ID (Students only)
+app.delete('/api/delete-cv/:cvId', authenticate, async (req, res) => {
+  if (req.user.role !== 'student') {
+    console.error(`User ${req.user.userId} with role ${req.user.role} attempted to delete a CV`);
+    return res.status(403).json({ message: 'Forbidden: Only students can delete CVs' });
+  }
+
+  const cvId = req.params.cvId;
+  console.log(`User ${req.user.userId} is attempting to delete CV with ID: ${cvId}`);
+
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      console.error(`User with ID ${req.user.userId} not found`);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Find the CV by cvId
+    const cv = user.cvs.id(cvId);
+    if (!cv) {
+      console.error(`CV with ID ${cvId} not found for user ${req.user.userId}`);
+      return res.status(404).json({ message: 'CV not found' });
+    }
+
+    const filename = cv.filename;
+    console.log(`Deleting CV file: ${filename}`);
+
+    // Remove the CV from the user's cvs array
+    cv.remove();
+    await user.save();
+    console.log(`Removed CV with ID ${cvId} from user ${req.user.userId}`);
+
+    // Delete the file from the filesystem
+    const filePath = path.resolve(__dirname, 'uploads', 'cvs', filename);
+    console.log(`Attempting to delete file at path: ${filePath}`);
+
+    try {
+      await fs.unlink(filePath);
+      console.log(`Deleted file at path: ${filePath}`);
+    } catch (fileErr) {
+      console.error(`Error deleting file ${filePath}:`, fileErr);
+      // Optionally, revert the database change if file deletion fails
+      return res.status(500).json({ message: 'Server Error: Could not delete the CV file' });
+    }
+
+    res.json({ message: 'CV deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting CV:', err);
+    res.status(500).json({ message: 'Server Error: Could not delete the CV' });
   }
 });
 
 app.use(express.static(path.join(__dirname, '../Client')));
+app.use('/uploads/cvs', express.static(path.join(__dirname, 'uploads', 'cvs')));
+
 
 // 404 Handler
 app.use((req, res) => {

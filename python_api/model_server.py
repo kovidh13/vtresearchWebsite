@@ -204,6 +204,8 @@ def process_resume():
         recommended_job = job_recommendation(resume_text)
         skills = extract_skills_from_resume(resume_text)
         education = extract_education_from_resume(resume_text)
+        print("job", recommended_job)
+        print("job", skills)
 
         return jsonify({
             'category': category,
