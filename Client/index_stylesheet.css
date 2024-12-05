@@ -25,8 +25,11 @@ header {
     height: 5rem;
     background-color: white;
     display: flex;
+    justify-content: space-between;
+    /* Ensures elements are spaced out */
     align-items: center;
-    padding: 1rem;
+    padding: 0 1rem;
+    /* Adds padding to the left and right */
     border-top: 5px solid rgba(134, 31, 65, 255);
     border-bottom: 3px solid rgba(134, 31, 65, 255);
     font-family: 'Montserrat', sans-serif;
@@ -36,6 +39,7 @@ header {
     display: flex;
     align-items: center;
     gap: 1rem;
+    /* Adds space between the logo and site name */
 }
 
 a img {
@@ -98,20 +102,27 @@ input {
 }
 
 
+/* Add spacing for right-hand links */
+.login_and_cart {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Adds space between buttons (e.g., login, logout) */
+}
+
+.logout_button {
+    display: inline-block; /* Ensures the same behavior */
+}
+
 .dropdown {
-    position: relative;
-    display: inline-block;
+    margin-left: 10px;
+    /* Adds space between the dropdown and other elements */
+    margin-right: 5rem;
 }
 
 .dropdown_button {
-    border: 1px solid rgba(134, 31, 65, 255);
-    border-radius: 4px;
-    background-color: white;
-    font-weight: 500;
-    color: rgba(134, 31, 65, 255);
-    padding: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    margin-left: 10px;
+    /* Space between buttons */
 }
 
 .dropdown_button:hover {

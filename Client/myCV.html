@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>My CV - VT Research Opportunities</title>
-    <!-- Include your CSS and other head elements -->
     <link rel="stylesheet" href="index_stylesheet.css" />
 </head>
 
@@ -12,43 +11,40 @@
     <div class="frame">
         <!-- Header -->
         <header class="header">
-            <header class="header">
-                <div class="logo_and_name">
-                    <a href="researchIndex.html">
-                        <img src="images/vtlogo.png" alt="Virginia Tech Logo" />
-                    </a>
-                    <a class="site_name" href="researchIndex.html">Virginia Tech</a>
-                </div>
+            <div class="logo_and_name">
+                <a href="researchIndex.html">
+                    <img src="images/vtlogo.png" alt="Virginia Tech Logo" />
+                </a>
+                <a class="site_name" href="researchIndex.html">Virginia Tech</a>
+            </div>
 
-                <div class="user_info">
-                    <span class="user_role" style="display: none;"></span>
+            <div class="user_info">
+                <span class="user_role" style="display: none;"></span>
+            </div>
+            <a href="recommendedOpportunities.html" class="researchOpportunities">
+                Recommended Opportunities
+            </a>
+            <div class="login_and_cart">
+                <a href="login.html">
+                    <button class="login_button">Log In</button>
+                </a>
+                <a href="#" class="login_button logout_button" onclick="logout()" style="display: none;">
+                    Logout
+                </a>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown_button">
+                    <img src="images/dropdown.png" width="10px" height="auto" alt="Dropdown Icon" />
+                    &#9776;
+                </button>
+                <div class="dropdown-content">
+                    <a href="#">My Settings</a>
+                    <a href="#">My CVs</a>
+                    <a href="#">My Applications</a>
+                    <a href="postOpportunity.html" class="post_opportunity_menu" style="display: none;">Post New
+                        Research Opportunity</a>
                 </div>
-                <button class="researchOpportunities">Research Opportunities</button>
-                <div class="login_and_cart">
-                    <!-- Wrap the button inside an anchor tag -->
-                    <a href="login.html">
-                        <button class="login_button">
-                            Log In
-                        </button>
-                    </a>
-                    <button class="logout_button" onclick="logout()" style="display: none;">
-                        Logout
-                    </button>
-                </div>
-                <div class="dropdown">
-                    <button class="dropdown_button">
-                        <img src="images/dropdown.png" width="10px" height="auto" alt="Dropdown Icon" />
-                        &#9776;
-                    </button>
-                    <div class="dropdown-content">
-                        <a href="#">My Settings</a>
-                        <a href="#">My CVs</a>
-                        <a href="#">My Applications</a>
-                        <a href="postOpportunity.html" class="post_opportunity_menu" style="display: none;">Post New
-                            Research Opportunity</a>
-                    </div>
-                </div>
-            </header>
+            </div>
         </header>
 
         <!-- Main Content -->
@@ -57,7 +53,7 @@
             <div id="cv-message" class="message"></div>
             <form id="cv-upload-form" enctype="multipart/form-data">
                 <input type="file" id="cv-file" accept=".pdf,.txt" required />
-                <button type="submit">Upload CV</button>
+                <button type="submit" class="upload-button">Upload CV</button>
             </form>
             <h3>Your Uploaded CVs</h3>
             <div id="cv-list">
@@ -70,10 +66,6 @@
         <footer class="footer">
             <div class="logo_and_services">
                 <img src="images/vtlogo.png" width="40px" height="auto" alt="Virginia Tech Logo" />
-                <div>
-                    <a class="links" href="#">About</a>
-                    <a class="links" href="#">Contact</a>
-                </div>
             </div>
         </footer>
     </div>

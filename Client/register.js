@@ -94,4 +94,28 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const recommendedButton = document.querySelector('.researchOpportunities');
+    const user = getUserFromToken();
+  
+    if (!user || user.role !== 'student') {
+      // Hide the Recommended Opportunities button if not logged in as a student
+      recommendedButton.style.display = 'none';
+    }
+  
+    function getUserFromToken() {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+  
+      try {
+        const payload = token.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payload));
+        return decodedPayload;
+      } catch (e) {
+        console.error('Error decoding token:', e);
+        return null;
+      }
+    }
+  });
   
