@@ -89,7 +89,6 @@
             <div class="user_info">
                 <span class="user_role" style="display: none;"></span>
             </div>
-            <button class="researchOpportunities">Research Opportunities</button>
             <div class="login_and_cart">
                 <!-- Wrap the button inside an anchor tag -->
                 <a href="login.html">
@@ -97,21 +96,26 @@
                         Log In
                     </button>
                 </a>
-                <button class="logout_button" onclick="logout()" style="display: none;">
+                <a href="#" class="login_button logout_button" onclick="logout()" style="display: none;">
                     Logout
-                </button>
+                </a>
             </div>
-            <div class="dropdown">
+            <div class="dropdown" id="dropdown-menu">
                 <button class="dropdown_button">
                     <img src="images/dropdown.png" width="10px" height="auto" alt="Dropdown Icon" />
                     &#9776;
                 </button>
-                <div class="dropdown-content">
+                <div id="dropdown-content" class="dropdown-content">
                     <a href="#">My Settings</a>
-                    <a href="#">My Resumes</a>
-                    <a href="#">My Applications</a>
-                    <a href="postOpportunity.html" class="post_opportunity_menu" style="display: none;">Post New
-                        Research Opportunity</a>
+                    <a href="myCV.html" class="my_cv_menu" style="display: none;">My CV</a>
+                    
+                    <!-- Student "My Applications" Link -->
+                    <a id="student-applications-link" href="applications.html" style="display: none;">My Applications</a>
+                    
+                    <!-- Professor "My Applications" Link -->
+                    <a id="professor-applications-link" href="myApplications.html" style="display: none;">My Applications</a>
+                    
+                    <a href="postOpportunity.html" class="post_opportunity_menu" style="display: none;">Post New Research Opportunity</a>
                 </div>
             </div>
         </header>

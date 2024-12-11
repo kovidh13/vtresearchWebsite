@@ -106,8 +106,7 @@ input {
 .login_and_cart {
     display: flex;
     align-items: center;
-    gap: 20px;
-    /* Adds space between buttons (e.g., login, logout) */
+    margin-left: 1rem;
 }
 
 .logout_button {
@@ -205,6 +204,11 @@ input {
 #detail-department {
     font-size: 16px;
     margin-bottom: 5px;
+}
+
+.application_item {
+    margin-top: 1rem;
+    padding-bottom: .5rem;
 }
 
 footer {

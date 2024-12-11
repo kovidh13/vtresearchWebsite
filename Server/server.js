@@ -27,10 +27,12 @@ const JWT_SECRET = 'secret_key';
 const authenticate = (req, res, next) => {
   // ... your existing authentication code ...
   const authHeader = req.headers.authorization;
+  console.log('Authorization Header:', authHeader);
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Unauthorized: No token provided' });
   }
   const token = authHeader.split(' ')[1];
+  console.log('Token:', token);
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
@@ -84,6 +86,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['student', 'professor'], required: true },
   cvs: [
     {
+      originalName: { type: String, required: true },
       filename: String,
       uploadedAt: { type: Date, default: Date.now },
     },
@@ -163,7 +166,7 @@ app.get('/api/my-cvs', authenticate, async (req, res) => {
   }
 });
 
-app.get('/download-cv/:filename', authenticate, async (req, res) => {
+app.get('/api/download-cv/:filename', authenticate, async (req, res) => {
   const filename = req.params.filename;
 
   try {
@@ -221,6 +224,17 @@ app.post('/api/upload-cv', authenticate, upload.single('cv'), async (req, res) =
 
       console.log('Matched opportunities:', opportunities);
 
+      // **New Lines to Save CV Details**
+      await User.findByIdAndUpdate(req.user.userId, { 
+          $push: { 
+              cvs: { 
+                  originalName: req.file.originalname, // Save original filename
+                  filename: req.file.filename,         // Save stored filename
+                  uploadedAt: new Date(),
+              } 
+          } 
+      });
+
       // Send the response
       res.status(200).json({
           message: 'CV processed successfully',
@@ -232,6 +246,7 @@ app.post('/api/upload-cv', authenticate, upload.single('cv'), async (req, res) =
       res.status(500).json({ message: 'An error occurred', error: err.message });
   }
 });
+
 
 
 
@@ -284,6 +299,64 @@ app.post('/api/opportunities/:id/apply', authenticate, async (req, res) => {
   }
 });
 
+app.get('/api/professor/applications', authenticate, async (req, res) => {
+  if (req.user.role !== 'professor') {
+    return res.status(403).json({ message: 'Forbidden: Only professors can view applications' });
+  }
+
+  try {
+    // Find all opportunities posted by the professor
+    const opportunities = await ResearchOpportunity.find({ postedBy: req.user.userId });
+
+    // Extract opportunity IDs
+    const opportunityIds = opportunities.map(opp => opp._id);
+
+    // Fetch applications related to these opportunities
+    const applications = await Application.find({ opportunity: { $in: opportunityIds } })
+      .populate('student', 'username email')
+      .populate('opportunity', 'title department');
+
+    res.json(applications);
+  } catch (err) {
+    console.error('Error fetching applications:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
+
+app.get('/api/applications/:id/download-cv', authenticate, async (req, res) => {
+  if (req.user.role !== 'professor') {
+    return res.status(403).json({ message: 'Forbidden: Only professors can download CVs' });
+  }
+
+  const applicationId = req.params.id;
+
+  try {
+    const application = await Application.findById(applicationId).populate('opportunity');
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found' });
+    }
+
+    if (application.opportunity.postedBy.toString() !== req.user.userId) {
+      return res.status(403).json({ message: 'Forbidden: You can only access applications for your opportunities' });
+    }
+
+    const filePath = path.join(__dirname, 'uploads/cvs', application.cv.filename);
+    res.download(filePath, application.cv.filename, (err) => {
+      if (err) {
+        console.error('Error sending file:', err);
+        res.status(500).json({ message: 'Failed to download CV' });
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching application or CV:', err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+
+
 
 // User Registration with Password Hashing
 app.post('/api/register', async (req, res) => {
@@ -307,6 +380,7 @@ app.post('/api/register', async (req, res) => {
 
 // User Login with Password Verification
 app.post('/api/login', async (req, res) => {
+  console.log('Login route accessed');
   const { username, password } = req.body;
   try {
     const user = await User.findOne({ username });
@@ -315,11 +389,14 @@ app.post('/api/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
+
     const token = jwt.sign(
       { userId: user._id, username: user.username, role: user.role },
       JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '24h' }
     );
+
+    console.log(token);
 
     res.json({ token });
   } catch (err) {
@@ -350,6 +427,26 @@ app.post('/api/opportunities', authenticate, async (req, res) => {
   }
 });
 
+// Get Student's Applications
+app.get('/api/student/applications', authenticate, async (req, res) => {
+  // Ensure that only students can access this endpoint
+  if (req.user.role !== 'student') {
+    return res.status(403).json({ message: 'Forbidden: Only students can access their applications.' });
+  }
+
+  try {
+    // Fetch all applications where the student field matches the logged-in user's ID
+    const applications = await Application.find({ student: req.user.userId })
+      .populate('opportunity', 'title department') // Populate opportunity details
+      .sort({ appliedAt: -1 }); // Sort by most recent applications
+
+    res.status(200).json({ applications });
+  } catch (err) {
+    console.error('Error fetching student applications:', err);
+    res.status(500).json({ message: 'Server Error: Unable to retrieve applications.' });
+  }
+});
+
 app.get('/api/recommended-opportunities', authenticate, (req, res) => {
   try {
       // Check if there are stored recommended opportunities
@@ -358,6 +455,59 @@ app.get('/api/recommended-opportunities', authenticate, (req, res) => {
   } catch (err) {
       console.error('Error fetching recommended opportunities:', err);
       res.status(500).json({ message: 'Failed to fetch recommended opportunities' });
+  }
+});
+
+app.post('/api/applications/bulk-decision', authenticate, async (req, res) => {
+  try {
+    const user = req.user; // Assuming `authenticate` attaches user info to req.user
+
+    // Authorize only professors
+    if (user.role !== 'professor') {
+      return res.status(403).json({ success: false, message: 'Forbidden: Only professors can perform this action.' });
+    }
+
+    const { applicationIds, decision } = req.body;
+
+    // Validate input
+    if (!Array.isArray(applicationIds) || applicationIds.length === 0) {
+      return res.status(400).json({ success: false, message: 'No application IDs provided.' });
+    }
+
+    if (!['accept', 'reject'].includes(decision)) {
+      return res.status(400).json({ success: false, message: 'Invalid decision. Must be "accept" or "reject".' });
+    }
+
+    // Define the new status based on the decision
+    const newStatus = decision === 'accept' ? 'accepted' : 'rejected';
+
+    // Fetch all opportunities posted by the professor
+    const opportunities = await ResearchOpportunity.find({ postedBy: user.userId }).select('_id');
+    const opportunityIds = opportunities.map(opp => opp._id);
+
+    // Fetch applications that belong to the professor's opportunities and are pending
+    const validApplications = await Application.find({
+      _id: { $in: applicationIds },
+      opportunity: { $in: opportunityIds },
+      status: 'pending' // Assuming only pending applications can be decided upon
+    }).select('_id');
+
+    const validApplicationIds = validApplications.map(app => app._id);
+
+    if (validApplicationIds.length === 0) {
+      return res.status(404).json({ success: false, message: 'No valid applications found to update.' });
+    }
+
+    // Update the applications
+    const result = await Application.updateMany(
+      { _id: { $in: validApplicationIds } },
+      { $set: { status: newStatus } }
+    );
+
+    res.status(200).json({ success: true, message: `Applications have been successfully ${newStatus}ed.` });
+  } catch (error) {
+    console.error('Error in bulk-decision:', error);
+    res.status(500).json({ success: false, message: 'Server Error: Unable to process your request.' });
   }
 });
 
